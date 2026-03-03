@@ -1,5 +1,6 @@
 package org.bormun.evento;
 
+import org.bormun.domain.categoria.MotivoErrorDeportista;
 import org.bormun.domain.solicitud.EstadoSolicitud;
 import org.bormun.domain.solicitud.Solicitud;
 import org.bormun.domain.solicitud.SolicitudInvalidaException;
@@ -11,6 +12,7 @@ import org.bormun.domain.participante.DatosDeportista;
 import org.bormun.domain.participante.Equipo;
 import org.bormun.usecase.AceptarSolicitud;
 import org.bormun.usecase.EnviarSolicitud;
+import org.bormun.usecase.NegarSolicitud;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
@@ -21,8 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InscripcionesTest {
     private Evento evento;
-    private EnviarSolicitud useCaseEnviar = new EnviarSolicitud();
-    private AceptarSolicitud useCaseAceptar = new AceptarSolicitud();
+    private final EnviarSolicitud useCaseEnviar = new EnviarSolicitud();
+    private final AceptarSolicitud useCaseAceptar = new AceptarSolicitud();
+    private final NegarSolicitud useCaseNegar = new NegarSolicitud();
 
     private final String CAT_MASCULINA = "Categoria Juevenil Masculina";
     private final String CAT_FEMENINA = "Categoria Sub30 Femenina";
@@ -55,13 +58,17 @@ class InscripcionesTest {
         @Test
         @DisplayName("Falla cuando hay géneros mixtos o incorrectos")
         void testErrorGenero() {
-            Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2005);
-            equipo.agregarIntegrante(new DatosDeportista("Maria", "345", GeneroNacimiento.MUJER, LocalDate.of(2006, 7, 14)));
+            Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2006);
+            equipo.agregarIntegrante(new DatosDeportista("Maria", "345", GeneroNacimiento.MUJER, LocalDate.of(2006, 1, 1)));
 
             Solicitud solicitud = new Solicitud("Org1", equipo, evento.getCategorias().get(0));
 
-            var ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
-            assertEquals("Hay deportistas que no cumplen con los requisitos", ex.getMessage());
+            SolicitudInvalidaException ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
+            assertAll("Estado error",
+                    () -> assertEquals("Hay deportistas que no cumplen con los requisitos", ex.getMessage()),
+                    () -> assertEquals(MotivoErrorDeportista.GENERO_INVALIDO, ex.getCulpables().get(0).getMotivoError()),
+                    () -> assertEquals("Maria", ex.getCulpables().get(0).getDeportista().getNombre())
+            );
         }
 
         @Test
@@ -71,10 +78,14 @@ class InscripcionesTest {
 
             Solicitud solicitud = new Solicitud("Org1", equipo, evento.getCategorias().get(1));
 
-            var ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
-            assertEquals("Hay deportistas que no cumplen con los requisitos", ex.getMessage());
-            assertEquals(1, ex.getDeportistasCulpables().size());
-            assertEquals("Sofia", ex.getDeportistasCulpables().get(0).getNombre());
+            SolicitudInvalidaException ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
+            assertAll("Estado error",
+                    () -> assertEquals("Hay deportistas que no cumplen con los requisitos", ex.getMessage()),
+                    () -> assertEquals(1, ex.getCulpables().size()),
+                    () -> assertEquals("Sofia", ex.getCulpables().get(0).getDeportista().getNombre()),
+                    () -> assertEquals(MotivoErrorDeportista.EDAD_INVALIDA, ex.getCulpables().get(0).getMotivoError())
+            );
+
         }
 
         @Test
@@ -119,6 +130,36 @@ class InscripcionesTest {
                 () -> assertEquals(1, evento.getSolicitudes().size()),
                 () -> assertEquals(EstadoSolicitud.EN_PROCESO, evento.getSolicitudes().get(0).getEstadoSolicitud()),
                 () -> assertTrue(evento.getCategorias().get(0).getInscritos().isEmpty(), "No debe estar inscrito hasta ser aceptada")
+        );
+    }
+
+    @Test
+    @DisplayName("Puedo aceptar solicitudes")
+    void aceptarSolicitud(){
+        Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2010);
+        Solicitud solicitud = new Solicitud("OrgExito", equipo, evento.getCategorias().get(0));
+
+        useCaseEnviar.enviarSolicitud(evento, solicitud);
+
+        useCaseAceptar.aceptarSolicitud(solicitud);
+        assertAll("Estado post-aceptado",
+                () -> assertEquals(1, evento.getCategorias().get(0).getInscritos().size()),
+                () -> assertEquals(EstadoSolicitud.ACEPTADO, solicitud.getEstadoSolicitud())
+        );
+    }
+
+    @Test
+    @DisplayName("Puedo negar solicitudes")
+    void negarSolicitud(){
+        Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2010);
+        Solicitud solicitud = new Solicitud("OrgExito", equipo, evento.getCategorias().get(0));
+
+        useCaseEnviar.enviarSolicitud(evento, solicitud);
+
+        useCaseNegar.negarSolicitud(solicitud, "porque si");
+        assertAll("Estado post-negado",
+                () -> assertTrue(evento.getCategorias().get(0).getInscritos().isEmpty(), "La categoria esta vacia porque se nego el acceso"),
+                () -> assertEquals(EstadoSolicitud.RECHAZADO, solicitud.getEstadoSolicitud())
         );
     }
 

@@ -1,22 +1,23 @@
 package org.bormun.domain.solicitud;
 
+import org.bormun.domain.categoria.ErrorDeportista;
 import org.bormun.domain.participante.Deportista;
 
 import java.util.List;
 
 public class SolicitudInvalidaException extends RuntimeException {
-    private List<Deportista> deportistasCulpables;
+    private List<ErrorDeportista> culpables;
 
     public SolicitudInvalidaException(String message){
         super(message);
     }
 
-    public SolicitudInvalidaException(String message, List<Deportista> deportistas) {
+    public SolicitudInvalidaException(String message, List<ErrorDeportista> deportistas) {
         super(message);
-        this.deportistasCulpables = deportistas;
+        this.culpables = deportistas;
     }
 
-    public List<Deportista> getDeportistasCulpables() {
-        return deportistasCulpables;
+    public List<ErrorDeportista> getCulpables() {
+        return culpables;
     }
 }

@@ -21,7 +21,6 @@ public class Categoria {
         this.restricciones = restricciones;
     }
 
-    //TODO: MEJORAR EL ERROR PARA SABER CUALES DEPORTISTAS LO GENERAN
     public void verificarDeportista(Deportista deportista){
         int edad = deportista.getEdad();
         GeneroNacimiento genero = deportista.getGenero();
@@ -31,10 +30,10 @@ public class Categoria {
             GeneroNacimiento generoCategoria = restricciones.generoNacimiento();
 
         if (edad > edadMaxima || edad < edadMinima){
-            throw new SolicitudInvalidaException("Deportista fuera del rango de edad");
+            throw new ErrorDeportista(deportista, MotivoErrorDeportista.EDAD_INVALIDA);
         }
         if (genero != generoCategoria){
-            throw new SolicitudInvalidaException("Deportista no cumple con el genero de la categoria");
+            throw new ErrorDeportista(deportista, MotivoErrorDeportista.GENERO_INVALIDO);
         }
     }
 

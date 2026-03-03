@@ -1,5 +1,6 @@
 package org.bormun.usecase;
 
+import org.bormun.domain.categoria.ErrorDeportista;
 import org.bormun.domain.solicitud.Solicitud;
 import org.bormun.domain.solicitud.SolicitudInvalidaException;
 import org.bormun.domain.categoria.Categoria;
@@ -16,11 +17,14 @@ public class EnviarSolicitud {
         List<Deportista> deportistas = equipo.getIntegrantes();
         Categoria categoria = solicitud.getCategoria();
 
-        List<Deportista> conErrores = new ArrayList<>();
+        List<ErrorDeportista> conErrores = new ArrayList<>();
 
         for (Deportista deportista : deportistas) {
-            categoria.verificarDeportista(deportista);
-
+            try{
+                categoria.verificarDeportista(deportista);
+            } catch (ErrorDeportista e) {
+                conErrores.add(e);
+            }
         }
 
         if(!conErrores.isEmpty()){

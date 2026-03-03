@@ -26,7 +26,7 @@ public class Equipo {
 
     }
 
-    public void agregarIntegrante2(List<DatosDeportista> datos){
+    public void agregarIntegrante(List<DatosDeportista> datos){
         for(DatosDeportista dato : datos){
             agregarIntegrante(dato);
         }
