@@ -1,10 +1,5 @@
-package org.bormun.domain.evento;
+package org.bormun.dominio.modelos;
 
-import org.bormun.domain.solicitud.Solicitud;
-import org.bormun.domain.categoria.Categoria;
-import org.bormun.domain.categoria.Restricciones;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +7,7 @@ import java.util.List;
 public class Evento {
     private List<Categoria> categorias;
     private List<Solicitud> solicitudes;
-    private Enum estado;
+    private boolean inscripcionAbierta;
 
 
     public Evento(){
@@ -34,5 +29,13 @@ public class Evento {
 
     public List<Solicitud> getSolicitudes() {
         return solicitudes;
+    }
+
+    public boolean isInscripcionAbierta() {
+        return inscripcionAbierta;
+    }
+
+    public void setInscripcionAbierta(boolean inscripcionAbierta) {
+        this.inscripcionAbierta = inscripcionAbierta;
     }
 }

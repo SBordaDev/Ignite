@@ -1,6 +1,4 @@
-package org.bormun.domain.categoria;
-
-import org.bormun.domain.evento.GeneroNacimiento;
+package org.bormun.dominio.modelos;
 
 //TODO: agregar restricciones de peso y altura
 //TODO: agregar restriccion minIntegrantes

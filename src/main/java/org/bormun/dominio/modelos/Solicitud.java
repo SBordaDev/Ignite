@@ -1,7 +1,5 @@
-package org.bormun.domain.solicitud;
+package org.bormun.dominio.modelos;
 
-import org.bormun.domain.categoria.Categoria;
-import org.bormun.domain.participante.Equipo;
 import java.time.LocalDate;
 
 

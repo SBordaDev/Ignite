@@ -1,4 +1,4 @@
-package org.bormun.domain.solicitud;
+package org.bormun.dominio.modelos;
 
 public enum EstadoSolicitud {
     EN_PROCESO,

@@ -1,7 +1,7 @@
-package org.bormun.usecase;
+package org.bormun.aplicacion.usecase;
 
-import org.bormun.domain.solicitud.EstadoSolicitud;
-import org.bormun.domain.solicitud.Solicitud;
+import org.bormun.dominio.modelos.EstadoSolicitud;
+import org.bormun.dominio.modelos.Solicitud;
 
 public class NegarSolicitud {
     public void negarSolicitud(Solicitud solicitud, String comenterio){

@@ -1,4 +1,4 @@
-package org.bormun.domain.evento;
+package org.bormun.dominio.modelos;
 
 //TODO: agregar genero bisexual
 public enum GeneroNacimiento {

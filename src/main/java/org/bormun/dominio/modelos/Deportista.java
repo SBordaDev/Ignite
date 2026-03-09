@@ -1,6 +1,4 @@
-package org.bormun.domain.participante;
-
-import org.bormun.domain.evento.GeneroNacimiento;
+package org.bormun.dominio.modelos;
 
 import java.time.LocalDate;
 import java.time.Period;

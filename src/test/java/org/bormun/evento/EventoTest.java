@@ -1,18 +1,18 @@
 package org.bormun.evento;
 
-import org.bormun.domain.categoria.MotivoErrorDeportista;
-import org.bormun.domain.solicitud.EstadoSolicitud;
-import org.bormun.domain.solicitud.Solicitud;
-import org.bormun.domain.solicitud.SolicitudInvalidaException;
-import org.bormun.domain.categoria.Categoria;
-import org.bormun.domain.evento.Evento;
-import org.bormun.domain.evento.GeneroNacimiento;
-import org.bormun.domain.categoria.Restricciones;
-import org.bormun.domain.participante.DatosDeportista;
-import org.bormun.domain.participante.Equipo;
-import org.bormun.usecase.AceptarSolicitud;
-import org.bormun.usecase.EnviarSolicitud;
-import org.bormun.usecase.NegarSolicitud;
+import org.bormun.dominio.modelos.MotivoErrorDeportista;
+import org.bormun.dominio.modelos.EstadoSolicitud;
+import org.bormun.dominio.modelos.Solicitud;
+import org.bormun.dominio.excepciones.SolicitudInvalidaException;
+import org.bormun.dominio.modelos.Categoria;
+import org.bormun.dominio.modelos.Evento;
+import org.bormun.dominio.modelos.GeneroNacimiento;
+import org.bormun.dominio.modelos.Restricciones;
+import org.bormun.dominio.modelos.DatosDeportista;
+import org.bormun.dominio.modelos.Equipo;
+import org.bormun.aplicacion.usecase.AceptarSolicitud;
+import org.bormun.aplicacion.usecase.EnviarSolicitud;
+import org.bormun.aplicacion.usecase.NegarSolicitud;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;

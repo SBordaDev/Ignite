@@ -1,9 +1,7 @@
-package org.bormun.domain.categoria;
+package org.bormun.dominio.modelos;
 
-import org.bormun.domain.solicitud.SolicitudInvalidaException;
-import org.bormun.domain.evento.GeneroNacimiento;
-import org.bormun.domain.participante.Deportista;
-import org.bormun.domain.participante.Equipo;
+import org.bormun.dominio.excepciones.ErrorDeportista;
+import org.bormun.dominio.excepciones.SolicitudInvalidaException;
 
 import java.util.ArrayList;
 import java.util.List;

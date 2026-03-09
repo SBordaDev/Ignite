@@ -1,6 +1,7 @@
-package org.bormun.domain.categoria;
+package org.bormun.dominio.excepciones;
 
-import org.bormun.domain.participante.Deportista;
+import org.bormun.dominio.modelos.MotivoErrorDeportista;
+import org.bormun.dominio.modelos.Deportista;
 
 public class ErrorDeportista extends RuntimeException {
     private final Deportista deportista;

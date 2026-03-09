@@ -1,7 +1,4 @@
-package org.bormun.domain.solicitud;
-
-import org.bormun.domain.categoria.ErrorDeportista;
-import org.bormun.domain.participante.Deportista;
+package org.bormun.dominio.excepciones;
 
 import java.util.List;
 

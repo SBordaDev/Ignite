@@ -1,4 +1,4 @@
-package org.bormun.domain.participante;
+package org.bormun.dominio.modelos;
 
 import java.util.ArrayList;
 import java.util.List;

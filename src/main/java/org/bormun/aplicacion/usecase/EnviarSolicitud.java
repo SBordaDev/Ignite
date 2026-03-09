@@ -1,18 +1,22 @@
-package org.bormun.usecase;
+package org.bormun.aplicacion.usecase;
 
-import org.bormun.domain.categoria.ErrorDeportista;
-import org.bormun.domain.solicitud.Solicitud;
-import org.bormun.domain.solicitud.SolicitudInvalidaException;
-import org.bormun.domain.categoria.Categoria;
-import org.bormun.domain.evento.Evento;
-import org.bormun.domain.participante.Deportista;
-import org.bormun.domain.participante.Equipo;
+import org.bormun.dominio.excepciones.ErrorDeportista;
+import org.bormun.dominio.modelos.Solicitud;
+import org.bormun.dominio.excepciones.SolicitudInvalidaException;
+import org.bormun.dominio.modelos.Categoria;
+import org.bormun.dominio.modelos.Evento;
+import org.bormun.dominio.modelos.Deportista;
+import org.bormun.dominio.modelos.Equipo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EnviarSolicitud {
     public void enviarSolicitud(Evento evento, Solicitud solicitud){
+        if(!evento.isInscripcionAbierta()){
+            throw new SolicitudInvalidaException("Las inscripciones estan cerradas");
+        }
+
         Equipo equipo = solicitud.getEquipo();
         List<Deportista> deportistas = equipo.getIntegrantes();
         Categoria categoria = solicitud.getCategoria();

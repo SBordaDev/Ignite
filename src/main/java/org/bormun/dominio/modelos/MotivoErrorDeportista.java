@@ -1,4 +1,4 @@
-package org.bormun.domain.categoria;
+package org.bormun.dominio.modelos;
 
 public enum MotivoErrorDeportista {
     EDAD_INVALIDA,
