@@ -7,6 +7,7 @@ import org.bormun.dominio.modelos.Categoria;
 import org.bormun.dominio.modelos.Evento;
 import org.bormun.dominio.modelos.Deportista;
 import org.bormun.dominio.modelos.Equipo;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class EnviarSolicitud {
         }
 
         categoria.verificarEquipo(equipo);
-        solicitud.setPrecioTotal(categoria.getPrecioInscripcion());
+        solicitud.actualizarPrecioTotal(categoria.getPrecioInscripcion());
         evento.agregarSolicitud(solicitud);
     }
 }

@@ -5,14 +5,15 @@ import java.time.LocalDate;
 
 
 public class Solicitud {
+    private Long id;
     private final String nombreOrganizacion;
-    private final LocalDate fechaSolicitud;
+    private LocalDate fechaSolicitud;
     private boolean pagoConfirmado;
     private int precioTotal;
     private EstadoSolicitud estadoSolicitud;
     private String comentarios;
-    private Equipo equipo;
-    private Categoria categoria;
+    private final Equipo equipo;
+    private final Categoria categoria;
 
     public Solicitud(String nombreOrganizacion, Equipo equipo, Categoria categoria){
         this.nombreOrganizacion = nombreOrganizacion;
@@ -44,7 +45,7 @@ public class Solicitud {
         return comentarios;
     }
 
-    public void setPrecioTotal(int precioUnit) {
+    public void actualizarPrecioTotal(int precioUnit) {
         this.precioTotal = precioUnit * this.equipo.getIntegrantes().size();
     }
 
@@ -54,5 +55,37 @@ public class Solicitud {
 
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public LocalDate getFechaSolicitud() {
+        return fechaSolicitud;
+    }
+
+    public String getNombreOrganizacion() {
+        return nombreOrganizacion;
+    }
+
+    public boolean isPagoConfirmado() {
+        return pagoConfirmado;
+    }
+
+    public void setPagoConfirmado(boolean pagoConfirmado) {
+        this.pagoConfirmado = pagoConfirmado;
+    }
+
+    public void setPrecioTotal(int precioTotal) {
+        this.precioTotal = precioTotal;
+    }
+
+    public void setFechaSolicitud(LocalDate fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

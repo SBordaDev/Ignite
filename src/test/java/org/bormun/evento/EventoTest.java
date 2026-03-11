@@ -37,7 +37,7 @@ class InscripcionesTest {
         Restricciones r1 = new Restricciones(12, 20, GeneroNacimiento.HOMBRE, 2, 2);
         Restricciones r2 = new Restricciones(30, 40, GeneroNacimiento.MUJER, 2, 3);
 
-        this.evento = new Evento();
+        this.evento = new Evento("Evento 1");
         evento.agregarCategoria(CAT_MASCULINA, 5000, r1);
         evento.agregarCategoria(CAT_FEMENINA, 5000, r2);
     }

@@ -4,20 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Equipo {
+    private Long id;
     private final String nombreEquipo;
     private List<Deportista> integrantes = new ArrayList<>();
 
     public Equipo(String nombreEquipo){
         this.nombreEquipo = nombreEquipo;
-    }
-
-    public List<Deportista> getIntegrantes() {
-        return integrantes;
-    }
-
-
-    public String getNombreEquipo() {
-        return this.nombreEquipo;
     }
 
     public void agregarIntegrante(DatosDeportista datos){
@@ -32,4 +24,19 @@ public class Equipo {
         }
     }
 
+    public String getNombreEquipo() {
+        return nombreEquipo;
+    }
+
+    public List<Deportista> getIntegrantes() {
+        return integrantes;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

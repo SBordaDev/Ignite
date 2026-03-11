@@ -28,4 +28,8 @@ public class Deportista{
     public GeneroNacimiento getGenero(){
         return datosDeportista.generoNacimiento();
     }
+
+    public DatosDeportista getDatosDeportista() {
+        return datosDeportista;
+    }
 }

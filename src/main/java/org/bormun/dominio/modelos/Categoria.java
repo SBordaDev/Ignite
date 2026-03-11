@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Categoria {
+    private Long id;
     private final String nombreCategoria;
     private final int precioInscripcion;
     private List<Equipo> inscritos;
@@ -63,5 +64,17 @@ public class Categoria {
 
     public int getPrecioInscripcion() {
         return precioInscripcion;
+    }
+
+    public Restricciones getRestricciones() {
+        return restricciones;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
