@@ -1,7 +1,10 @@
 package org.bormun;
 
+import org.bormun.aplicacion.usecase.AceptarSolicitud;
+import org.bormun.aplicacion.usecase.EnviarSolicitud;
 import org.bormun.dominio.modelos.*;
 import org.bormun.dominio.repositorios.EventoRepository;
+import org.bormun.dominio.repositorios.SolicitudRepository;
 import org.bormun.infraestructura.entidades.EventoEntidad;
 import org.bormun.infraestructura.mapper.EventoMapper;
 import org.springframework.boot.CommandLineRunner;
@@ -21,7 +24,7 @@ public class App {
     }
 
     @Bean
-    public CommandLineRunner probarRelaciones(EventoRepository eventoRepo, TransactionTemplate transactionTemplate) {
+    public CommandLineRunner probarRelaciones(EventoRepository eventoRepo, TransactionTemplate transactionTemplate, SolicitudRepository solicitudRepo) {
         return args -> {
 
             transactionTemplate.execute(status -> {
@@ -39,21 +42,21 @@ public class App {
 
                     Evento miEvento = EventoMapper.aDominio(entidadEncontrada);
 
-                    Equipo equipo = new Equipo("Equipo 1 test");
-                    equipo.agregarIntegrante(new DatosDeportista("Maria", "345", GeneroNacimiento.MUJER, LocalDate.of(2006, 1, 1)));
-                    equipo.agregarIntegrante(new DatosDeportista("Juliana", "123", GeneroNacimiento.MUJER, LocalDate.of(2006,2,1)));
+                    Equipo equipo = new Equipo("Equipo 3 test");
+                    equipo.agregarIntegrante(new DatosDeportista("Ricardo", "1014", GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
+                    equipo.agregarIntegrante(new DatosDeportista("Guillermo", "1015", GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
 
-                    Equipo equipo2 = new Equipo("Equipo 2 test");
-                    equipo2.agregarIntegrante(new DatosDeportista("Ana", "678", GeneroNacimiento.MUJER, LocalDate.of(2006, 1, 1)));
-                    equipo2.agregarIntegrante(new DatosDeportista("Sara", "901", GeneroNacimiento.MUJER, LocalDate.of(2006,2,1)));
+                    Equipo equipo2 = new Equipo("Equipo 4 test");
+                    equipo2.agregarIntegrante(new DatosDeportista("Samuel", "1016", GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
+                    equipo2.agregarIntegrante(new DatosDeportista("Juan", "1017", GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
 
-                    Solicitud solicitud = new Solicitud("ALL MIGHTY", equipo, miEvento.getCategorias().get(1));
-                    Solicitud solicitud2 = new Solicitud("IGNITE PRO TEAM", equipo2, miEvento.getCategorias().get(1));
+                    Solicitud solicitud = new Solicitud("ALL MIGHTY", equipo, miEvento.getCategorias().get(0));
+                    Solicitud solicitud2 = new Solicitud("IGNITE PRO TEAM", equipo2, miEvento.getCategorias().get(0));
 
-                    miEvento.agregarSolicitud(solicitud);
-                    miEvento.agregarSolicitud(solicitud2);
+                    EnviarSolicitud env = new EnviarSolicitud(eventoRepo, solicitudRepo);
+                    env.enviarSolicitud(1L,solicitud);
+                    env.enviarSolicitud(1L,solicitud2);
 
-                    eventoRepo.save(EventoMapper.aEntidad(miEvento));
                 } else {
                     System.out.println("El evento no existe en la base de datos.");
                 }

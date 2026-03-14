@@ -63,7 +63,7 @@ public class MapperEventoTest {
         // assertSame verifica que ambas variables apunten exactamente a la misma posición en RAM
         assertSame(categorias.get(0), catEnlazada, "¡Error! La solicitud creó un clon de la categoría en lugar de usar la misma instancia");
 
-        EquipoEntidad equipoEnlazado = solEntidad.getEquipos();
+        EquipoEntidad equipoEnlazado = solEntidad.getEquipo();
         assertNotNull(equipoEnlazado, "La solicitud debe tener su equipo enlazado");
         assertEquals("team 1 IG", equipoEnlazado.getNombreEquipo());
 

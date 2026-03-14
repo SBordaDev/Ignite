@@ -29,19 +29,11 @@ public class SolicitudEntidad {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "equipo_id")
-    private EquipoEntidad equipos;
+    private EquipoEntidad equipo;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
-    private CategoriaEntidad categorias;
-
-    public CategoriaEntidad getCategorias() {
-        return categorias;
-    }
-
-    public void setCategorias(CategoriaEntidad categorias) {
-        this.categorias = categorias;
-    }
+    private CategoriaEntidad categoria;
 
     public String getComentarios() {
         return comentarios;
@@ -51,12 +43,12 @@ public class SolicitudEntidad {
         this.comentarios = comentarios;
     }
 
-    public EquipoEntidad getEquipos() {
-        return equipos;
+    public EquipoEntidad getEquipo() {
+        return equipo;
     }
 
-    public void setEquipos(EquipoEntidad equipos) {
-        this.equipos = equipos;
+    public void setEquipo(EquipoEntidad equipos) {
+        this.equipo = equipos;
     }
 
     public EstadoSolicitud getEstadoSolicitud() {
@@ -105,5 +97,13 @@ public class SolicitudEntidad {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public CategoriaEntidad getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaEntidad categoria) {
+        this.categoria = categoria;
     }
 }

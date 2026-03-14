@@ -19,10 +19,6 @@ public class EventoEntidad {
     @JoinColumn(name = "evento_id")
     private List<CategoriaEntidad> categorias = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "evento_id")
-    private List<SolicitudEntidad> solicitudes = new ArrayList<>();
-
     public EventoEntidad(){}
 
     public Long getId() { return id; }
@@ -32,12 +28,6 @@ public class EventoEntidad {
     public void setInscripcionAbierta(boolean inscripcionAbierta) { this.inscripcionAbierta = inscripcionAbierta; }
     public List<CategoriaEntidad> getCategorias() { return categorias; }
     public void setCategorias(List<CategoriaEntidad> categorias) { this.categorias = categorias; }
-    public List<SolicitudEntidad> getSolicitudes() {
-        return solicitudes;
-    }
-    public void setSolicitudes(List<SolicitudEntidad> solicitudes) {
-        this.solicitudes = solicitudes;
-    }
 
     public void setId(Long id) {
         this.id = id;
