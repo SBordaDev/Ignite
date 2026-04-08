@@ -15,6 +15,9 @@ public class CategoriaEntidad {
     private String nombreCategoria;
     private int precioInscripcion;
 
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SolicitudEntidad> solicitudes = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
     private List<EquipoEntidad> equipos = new ArrayList<>();
@@ -60,5 +63,13 @@ public class CategoriaEntidad {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<SolicitudEntidad> getSolicitudes() {
+        return solicitudes;
+    }
+
+    public void setSolicitudes(List<SolicitudEntidad> solicitudes) {
+        this.solicitudes = solicitudes;
     }
 }

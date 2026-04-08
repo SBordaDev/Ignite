@@ -1,27 +1,40 @@
-package org.bormun.infraestructura.mapper;
+package org.bormun.infraestructura.mapper.basededatos;
 
 import org.bormun.dominio.modelos.Categoria;
 import org.bormun.dominio.modelos.Equipo;
 import org.bormun.dominio.modelos.Restricciones;
+import org.bormun.dominio.modelos.Solicitud;
 import org.bormun.infraestructura.entidades.CategoriaEntidad;
 import org.bormun.infraestructura.entidades.EquipoEntidad;
 import org.bormun.infraestructura.entidades.RestriccionesEntidad;
+import org.bormun.infraestructura.entidades.SolicitudEntidad;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriaMapper {
-    public static CategoriaEntidad aEntidad(Categoria categoria){
+    public static CategoriaEntidad aEntidad(Categoria categoria, List<Solicitud> solDelCategoria){
         CategoriaEntidad entidad = new CategoriaEntidad();
+        List<SolicitudEntidad> solicitudes = new ArrayList<>();
         List<EquipoEntidad> inscritos = new ArrayList<>();
 
         entidad.setId(categoria.getId());
         entidad.setNombreCategoria(categoria.getNombreCategoria());
         entidad.setPrecioInscripcion(categoria.getPrecioInscripcion());
+
+        for (Solicitud solicitud: solDelCategoria){
+            SolicitudEntidad solicitudTraducida = SolicitudMapper.aEntidad(solicitud);
+            solicitudTraducida.setCategoria(entidad);
+
+            solicitudes.add(solicitudTraducida);
+        }
+        entidad.setSolicitudes(solicitudes);
+
         for (Equipo equipo: categoria.getInscritos()){
             inscritos.add(SolicitudMapper.aEntidad(equipo));
         }
         entidad.setInscritos(inscritos);
+
 
         entidad.setRestricciones(aEntidad(categoria.getRestricciones()));
 

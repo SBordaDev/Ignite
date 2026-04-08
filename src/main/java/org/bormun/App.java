@@ -1,12 +1,11 @@
 package org.bormun;
 
-import org.bormun.aplicacion.usecase.AceptarSolicitud;
 import org.bormun.aplicacion.usecase.EnviarSolicitud;
 import org.bormun.dominio.modelos.*;
 import org.bormun.dominio.repositorios.EventoRepository;
 import org.bormun.dominio.repositorios.SolicitudRepository;
 import org.bormun.infraestructura.entidades.EventoEntidad;
-import org.bormun.infraestructura.mapper.EventoMapper;
+import org.bormun.infraestructura.mapper.basededatos.EventoMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,11 +28,11 @@ public class App {
 
             transactionTemplate.execute(status -> {
                 System.out.println("--- INICIANDO PRUEBA DE BASE DE DATOS IGNITE ---");
-                //Evento evento = new Evento("Evento test IGNITE");
-                //evento.agregarCategoria("CAT_MASCULINA", 5000, new Restricciones(10, 50, GeneroNacimiento.HOMBRE, 4, 2));
-                //evento.agregarCategoria("CAT_FEMENUNA", 2500, new Restricciones(10, 50, GeneroNacimiento.MUJER, 4, 2));
+                Evento evento = new Evento("Evento test IGNITE");
+                evento.agregarCategoria("CAT_MASCULINA", 5000, new Restricciones(10, 50, GeneroNacimiento.HOMBRE, 4, 2));
+                evento.agregarCategoria("CAT_FEMENUNA", 2500, new Restricciones(10, 50, GeneroNacimiento.MUJER, 4, 2));
 
-                //eventoRepo.save(EventoMapper.aEntidad(evento));
+                eventoRepo.save(EventoMapper.aEntidad(evento));
 
                 Optional<EventoEntidad> resultado = eventoRepo.findById(1L);
 

@@ -1,31 +1,19 @@
 package org.bormun.evento;
 
-import org.bormun.dominio.modelos.MotivoErrorDeportista;
-import org.bormun.dominio.modelos.EstadoSolicitud;
-import org.bormun.dominio.modelos.Solicitud;
+import org.bormun.dominio.excepciones.ErrorDeportista;
+import org.bormun.dominio.modelos.*;
 import org.bormun.dominio.excepciones.SolicitudInvalidaException;
-import org.bormun.dominio.modelos.Categoria;
-import org.bormun.dominio.modelos.Evento;
-import org.bormun.dominio.modelos.GeneroNacimiento;
-import org.bormun.dominio.modelos.Restricciones;
-import org.bormun.dominio.modelos.DatosDeportista;
-import org.bormun.dominio.modelos.Equipo;
-import org.bormun.aplicacion.usecase.AceptarSolicitud;
-import org.bormun.aplicacion.usecase.EnviarSolicitud;
-import org.bormun.aplicacion.usecase.NegarSolicitud;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InscripcionesTest {
     private Evento evento;
-    private final EnviarSolicitud useCaseEnviar = new EnviarSolicitud();
-    private final AceptarSolicitud useCaseAceptar = new AceptarSolicitud();
-    private final NegarSolicitud useCaseNegar = new NegarSolicitud();
 
     private final String CAT_MASCULINA = "Categoria Juevenil Masculina";
     private final String CAT_FEMENINA = "Categoria Sub30 Femenina";
@@ -63,9 +51,9 @@ class InscripcionesTest {
 
             Solicitud solicitud = new Solicitud("Org1", equipo, evento.getCategorias().get(0));
 
-            SolicitudInvalidaException ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
+            SolicitudInvalidaException ex = assertThrows(SolicitudInvalidaException.class, () -> enviarSolicitud(evento, solicitud));
             assertAll("Estado error",
-                    () -> assertEquals("Hay deportistas que no cumplen con los requisitos", ex.getMessage()),
+                    () -> assertEquals("Deportistas no cumplen con los requisitos", ex.getMessage()),
                     () -> assertEquals(MotivoErrorDeportista.GENERO_INVALIDO, ex.getCulpables().get(0).getMotivoError()),
                     () -> assertEquals("Maria", ex.getCulpables().get(0).getDeportista().getNombre())
             );
@@ -78,9 +66,9 @@ class InscripcionesTest {
 
             Solicitud solicitud = new Solicitud("Org1", equipo, evento.getCategorias().get(1));
 
-            SolicitudInvalidaException ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
+            SolicitudInvalidaException ex = assertThrows(SolicitudInvalidaException.class, () -> enviarSolicitud(evento, solicitud));
             assertAll("Estado error",
-                    () -> assertEquals("Hay deportistas que no cumplen con los requisitos", ex.getMessage()),
+                    () -> assertEquals("Deportistas no cumplen con los requisitos", ex.getMessage()),
                     () -> assertEquals(1, ex.getCulpables().size()),
                     () -> assertEquals("Sofia", ex.getCulpables().get(0).getDeportista().getNombre()),
                     () -> assertEquals(MotivoErrorDeportista.EDAD_INVALIDA, ex.getCulpables().get(0).getMotivoError())
@@ -100,7 +88,7 @@ class InscripcionesTest {
 
             Solicitud solicitud = new Solicitud("Org1", equipo, evento.getCategorias().get(0));
 
-            var ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud));
+            var ex = assertThrows(SolicitudInvalidaException.class, () -> enviarSolicitud(evento, solicitud));
             assertEquals("El Equipo es demasiado grande para el torneo", ex.getMessage());
         }
 
@@ -113,7 +101,7 @@ class InscripcionesTest {
             Equipo equipo3 = crearEquipoConDeportista("Culpable", GeneroNacimiento.HOMBRE, 2010);
             Solicitud solicitud3 = new Solicitud("Org3", equipo3, evento.getCategorias().get(0));
 
-            var ex = assertThrows(SolicitudInvalidaException.class, () -> useCaseEnviar.enviarSolicitud(evento, solicitud3));
+            var ex = assertThrows(SolicitudInvalidaException.class, () -> enviarSolicitud(evento, solicitud3));
             assertEquals("Ya no se pueden inscribir mas equipos a esta categoria", ex.getMessage());
         }
     }
@@ -124,7 +112,7 @@ class InscripcionesTest {
         Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2010);
         Solicitud solicitud = new Solicitud("OrgExito", equipo, evento.getCategorias().get(0));
 
-        useCaseEnviar.enviarSolicitud(evento, solicitud);
+        enviarSolicitud(evento, solicitud);
 
         assertAll("Estado post-envío",
                 () -> assertEquals(1, evento.getSolicitudes().size()),
@@ -139,9 +127,9 @@ class InscripcionesTest {
         Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2010);
         Solicitud solicitud = new Solicitud("OrgExito", equipo, evento.getCategorias().get(0));
 
-        useCaseEnviar.enviarSolicitud(evento, solicitud);
+        enviarSolicitud(evento, solicitud);
 
-        useCaseAceptar.aceptarSolicitud(solicitud);
+        aceptarSolicitud(solicitud);
         assertAll("Estado post-aceptado",
                 () -> assertEquals(1, evento.getCategorias().get(0).getInscritos().size()),
                 () -> assertEquals(EstadoSolicitud.ACEPTADO, solicitud.getEstadoSolicitud())
@@ -154,9 +142,9 @@ class InscripcionesTest {
         Equipo equipo = crearEquipoConDeportista("Carlos", GeneroNacimiento.HOMBRE, 2010);
         Solicitud solicitud = new Solicitud("OrgExito", equipo, evento.getCategorias().get(0));
 
-        useCaseEnviar.enviarSolicitud(evento, solicitud);
+        enviarSolicitud(evento, solicitud);
 
-        useCaseNegar.negarSolicitud(solicitud, "porque si");
+        negarSolicitud(solicitud, "porque si");
         assertAll("Estado post-negado",
                 () -> assertTrue(evento.getCategorias().get(0).getInscritos().isEmpty(), "La categoria esta vacia porque se nego el acceso"),
                 () -> assertEquals(EstadoSolicitud.RECHAZADO, solicitud.getEstadoSolicitud())
@@ -175,5 +163,56 @@ class InscripcionesTest {
         for (int i = 0; i < cantidad; i++) {
             cat.agregarEquipo(new Equipo("Equipo Llenado " + i));
         }
+    }
+
+    private void negarSolicitud(Solicitud solicitud, String comenterio){
+        solicitud.setEstadoSolicitud(EstadoSolicitud.RECHAZADO);
+        solicitud.setComentarios(comenterio);
+    }
+
+    private void aceptarSolicitud(Solicitud solicitud){
+        solicitud.setEstadoSolicitud(EstadoSolicitud.ACEPTADO);
+        solicitud.getCategoria().agregarEquipo(solicitud.getEquipo());
+    }
+
+    public void enviarSolicitud(Evento evento, Solicitud solicitud){
+
+        if(!evento.isInscripcionAbierta()){
+            throw new SolicitudInvalidaException("Las inscripciones estan cerradas");
+        }
+
+        Categoria categoriaReal = evento.getCategorias().stream()
+                .filter(c -> c.getNombreCategoria().equals(solicitud.getCategoria().getNombreCategoria()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("La categoría no existe"));
+
+        Equipo equipo = solicitud.getEquipo();
+
+        List<ErrorDeportista> conErrores = new ArrayList<>();
+
+        for (Deportista deportista : equipo.getIntegrantes()) {
+            try{
+                categoriaReal.verificarDeportista(deportista);
+            } catch (ErrorDeportista e) {
+                conErrores.add(e);
+            }
+        }
+
+        if(!conErrores.isEmpty()){
+            throw new SolicitudInvalidaException("Deportistas no cumplen con los requisitos", conErrores);
+        }
+
+        categoriaReal.verificarEquipo(equipo);
+
+        Solicitud solicitudValida = new Solicitud(
+                solicitud.getNombreOrganizacion(),
+                equipo,
+                categoriaReal
+        );
+
+
+        solicitudValida.actualizarPrecioTotal(categoriaReal.getPrecioInscripcion());
+        evento.agregarSolicitud(solicitudValida);
+
     }
 }

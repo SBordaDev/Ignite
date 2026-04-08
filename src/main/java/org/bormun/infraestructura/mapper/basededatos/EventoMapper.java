@@ -1,4 +1,4 @@
-package org.bormun.infraestructura.mapper;
+package org.bormun.infraestructura.mapper.basededatos;
 
 import org.bormun.dominio.modelos.*;
 import org.bormun.infraestructura.entidades.*;
@@ -16,7 +16,7 @@ public class EventoMapper {
 
         List<CategoriaEntidad> categoriasEntidad = new ArrayList<>();
         for (Categoria categoria: evento.getCategorias()){
-            categoriasEntidad.add(CategoriaMapper.aEntidad(categoria));
+            categoriasEntidad.add(CategoriaMapper.aEntidad(categoria, evento.getSolicitudes()));
         }
         entidad.setCategorias(categoriasEntidad);
 
@@ -25,15 +25,26 @@ public class EventoMapper {
 
     public static Evento aDominio(EventoEntidad evento){
         Evento dominio = new Evento(evento.getNombre());
-        List<Categoria> categorias = new ArrayList<>();
 
         dominio.setId(evento.getId());
         dominio.setInscripcionAbierta(evento.isInscripcionAbierta());
         for (CategoriaEntidad categoria: evento.getCategorias()){
-            categorias.add(CategoriaMapper.aDominio(categoria));
-        }
+            RestriccionesEntidad restriccionesEntidad = categoria.getRestricciones();
+            dominio.agregarCategoria(
+                    categoria.getNombreCategoria(),
+                    categoria.getPrecioInscripcion(),
+                    new Restricciones(
+                            restriccionesEntidad.getEdadMinima(),
+                            restriccionesEntidad.getEdadMaxima(),
+                            restriccionesEntidad.getGeneroNacimiento(),
+                            restriccionesEntidad.getNumeroEquipo(),
+                            restriccionesEntidad.getNumeroIntegrantesPorEquipo()
+                    ));
 
-        dominio.setCategorias(categorias);
+            for (SolicitudEntidad solicitudEntidad: categoria.getSolicitudes()){
+                dominio.agregarSolicitud(SolicitudMapper.aDominio(solicitudEntidad));
+            }
+        }
 
         return dominio;
     }

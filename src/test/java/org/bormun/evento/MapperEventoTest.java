@@ -2,7 +2,7 @@ package org.bormun.evento;
 
 import org.bormun.dominio.modelos.*;
 import org.bormun.infraestructura.entidades.*;
-import org.bormun.infraestructura.mapper.EventoMapper;
+import org.bormun.infraestructura.mapper.basededatos.EventoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,14 +50,14 @@ public class MapperEventoTest {
         assertEquals("CAT_MASCULINA", categorias.get(0).getNombreCategoria());
 
         // 4. Verificamos las Solicitudes
-        List<SolicitudEntidad> solicitudes = entidad.getSolicitudes();
+        List<SolicitudEntidad> solicitudes = entidad.getCategorias().get(0).getSolicitudes();
         assertEquals(1, solicitudes.size(), "Debe haber 1 solicitud traducida");
 
         SolicitudEntidad solEntidad = solicitudes.get(0);
         assertEquals("IGNITE ELITE TEAM", solEntidad.getNombreOrganizacion());
 
         // 5. ¡LA PRUEBA DE FUEGO DEL MAPPER! (Verificar que no hay clones)
-        CategoriaEntidad catEnlazada = solEntidad.getCategorias();
+        CategoriaEntidad catEnlazada = solEntidad.getCategoria();
         assertNotNull(catEnlazada, "La solicitud debe haber enlazado una categoría");
 
         // assertSame verifica que ambas variables apunten exactamente a la misma posición en RAM

@@ -1,10 +1,9 @@
-package org.bormun.infraestructura.mapper;
+package org.bormun.infraestructura.mapper.basededatos;
 
 import org.bormun.dominio.modelos.DatosDeportista;
 import org.bormun.dominio.modelos.Deportista;
 import org.bormun.dominio.modelos.Equipo;
 import org.bormun.dominio.modelos.Solicitud;
-import org.bormun.infraestructura.entidades.CategoriaEntidad;
 import org.bormun.infraestructura.entidades.DeportistaEntidad;
 import org.bormun.infraestructura.entidades.EquipoEntidad;
 import org.bormun.infraestructura.entidades.SolicitudEntidad;
@@ -24,10 +23,6 @@ public class SolicitudMapper {
         entidad.setEstadoSolicitud(solicitud.getEstadoSolicitud());
         entidad.setComentarios(solicitud.getComentarios());
         entidad.setEquipo(aEntidad(solicitud.getEquipo()));
-
-        CategoriaEntidad categoriaLigera = new CategoriaEntidad();
-        categoriaLigera.setId(solicitud.getCategoria().getId());
-        entidad.setCategoria(categoriaLigera);
 
         return entidad;
     }
