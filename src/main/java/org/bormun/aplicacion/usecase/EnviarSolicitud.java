@@ -13,8 +13,8 @@ import org.bormun.dominio.repositorios.SolicitudRepository;
 import org.bormun.infraestructura.entidades.CategoriaEntidad;
 import org.bormun.infraestructura.entidades.EventoEntidad;
 import org.bormun.infraestructura.entidades.SolicitudEntidad;
-import org.bormun.infraestructura.mapper.basededatos.EventoMapper;
-import org.bormun.infraestructura.mapper.basededatos.SolicitudMapper;
+import org.bormun.infraestructura.mapper.EventoMapper;
+import org.bormun.infraestructura.mapper.SolicitudMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

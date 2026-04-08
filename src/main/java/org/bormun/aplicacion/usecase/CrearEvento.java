@@ -3,7 +3,7 @@ package org.bormun.aplicacion.usecase;
 import org.bormun.dominio.modelos.Evento;
 import org.bormun.dominio.repositorios.EventoRepository; // Asumiendo que esta es tu interfaz
 import org.bormun.infraestructura.entidades.EventoEntidad;
-import org.bormun.infraestructura.mapper.basededatos.EventoMapper;
+import org.bormun.infraestructura.mapper.EventoMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +28,20 @@ public class CrearEvento {
         // Como las validaciones de edades y cupos ya están en la clase Restricciones,
         // aquí podrías agregar reglas a nivel global del evento.
         // Ejemplo ficticio: if (eventoRepository.existsByNombre(eventoNuevo.getNombre())) throw new EventoDuplicadoException();
+        if (eventoNuevo.getNombre() == null || eventoNuevo.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El evento no puede crearse sin un nombre válido.");
+        }
+
+        if (eventoNuevo.getCategorias() == null || eventoNuevo.getCategorias().isEmpty()) {
+            throw new IllegalArgumentException("El evento debe tener al menos una categoría para ser creado.");
+        }
+
+        if(eventoRepository.existsByNombreIgnoreCase(eventoNuevo.getNombre().trim())){
+            throw new IllegalArgumentException("El nombre del evento ya existe");
+        }
+
+
+
 
         // 2. Traducción hacia el Adaptador de Salida (Base de Datos)
         // El Mapper se encarga de desarmar el Evento y sus Categorías en Entidades

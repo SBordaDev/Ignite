@@ -1,4 +1,4 @@
-package org.bormun.infraestructura.mapper.basededatos;
+package org.bormun.infraestructura.mapper;
 
 import org.bormun.dominio.modelos.Categoria;
 import org.bormun.dominio.modelos.Equipo;

@@ -5,7 +5,7 @@ import org.bormun.dominio.modelos.*;
 import org.bormun.dominio.repositorios.EventoRepository;
 import org.bormun.dominio.repositorios.SolicitudRepository;
 import org.bormun.infraestructura.entidades.EventoEntidad;
-import org.bormun.infraestructura.mapper.basededatos.EventoMapper;
+import org.bormun.infraestructura.mapper.EventoMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,37 +28,37 @@ public class App {
 
             transactionTemplate.execute(status -> {
                 System.out.println("--- INICIANDO PRUEBA DE BASE DE DATOS IGNITE ---");
-                Evento evento = new Evento("Evento test IGNITE");
-                evento.agregarCategoria("CAT_MASCULINA", 5000, new Restricciones(10, 50, GeneroNacimiento.HOMBRE, 4, 2));
-                evento.agregarCategoria("CAT_FEMENUNA", 2500, new Restricciones(10, 50, GeneroNacimiento.MUJER, 4, 2));
+                //Evento evento = new Evento("Evento test IGNITE");
+                //evento.agregarCategoria("CAT_MASCULINA", 5000, new Restricciones(10, 50, GeneroNacimiento.HOMBRE, 4, 2));
+                //evento.agregarCategoria("CAT_FEMENUNA", 2500, new Restricciones(10, 50, GeneroNacimiento.MUJER, 4, 2));
 
-                eventoRepo.save(EventoMapper.aEntidad(evento));
+                //eventoRepo.save(EventoMapper.aEntidad(evento));
 
-                Optional<EventoEntidad> resultado = eventoRepo.findById(1L);
+                //Optional<EventoEntidad> resultado = eventoRepo.findById(1L);
 
-                if (resultado.isPresent()) {
-                    EventoEntidad entidadEncontrada = resultado.get();
+                //if (resultado.isPresent()) {
+                //    EventoEntidad entidadEncontrada = resultado.get();
 
-                    Evento miEvento = EventoMapper.aDominio(entidadEncontrada);
+                //    Evento miEvento = EventoMapper.aDominio(entidadEncontrada);
 
-                    Equipo equipo = new Equipo("Equipo 3 test");
-                    equipo.agregarIntegrante(new DatosDeportista("Ricardo", "1014", GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
-                    equipo.agregarIntegrante(new DatosDeportista("Guillermo", "1015", GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
+                //    Equipo equipo = new Equipo("Equipo 3 test");
+                //    equipo.agregarIntegrante(new DatosDeportista("Ricardo", "1014", GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
+                //    equipo.agregarIntegrante(new DatosDeportista("Guillermo", "1015", GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
 
-                    Equipo equipo2 = new Equipo("Equipo 4 test");
-                    equipo2.agregarIntegrante(new DatosDeportista("Samuel", "1016", GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
-                    equipo2.agregarIntegrante(new DatosDeportista("Juan", "1017", GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
+                //    Equipo equipo2 = new Equipo("Equipo 4 test");
+                //    equipo2.agregarIntegrante(new DatosDeportista("Samuel", "1016", GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
+                //    equipo2.agregarIntegrante(new DatosDeportista("Juan", "1017", GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
 
-                    Solicitud solicitud = new Solicitud("ALL MIGHTY", equipo, miEvento.getCategorias().get(0));
-                    Solicitud solicitud2 = new Solicitud("IGNITE PRO TEAM", equipo2, miEvento.getCategorias().get(0));
+                //    Solicitud solicitud = new Solicitud("ALL MIGHTY", equipo, miEvento.getCategorias().get(0));
+                //    Solicitud solicitud2 = new Solicitud("IGNITE PRO TEAM", equipo2, miEvento.getCategorias().get(0));
 
-                    EnviarSolicitud env = new EnviarSolicitud(eventoRepo, solicitudRepo);
-                    env.enviarSolicitud(1L,solicitud);
-                    env.enviarSolicitud(1L,solicitud2);
+                //    EnviarSolicitud env = new EnviarSolicitud(eventoRepo, solicitudRepo);
+                //    env.enviarSolicitud(1L,solicitud);
+                //    env.enviarSolicitud(1L,solicitud2);
 
-                } else {
-                    System.out.println("El evento no existe en la base de datos.");
-                }
+                //} else {
+                //    System.out.println("El evento no existe en la base de datos.");
+                //}
 
                 System.out.println("--- PRUEBA TERMINADA: Ve a tu consola H2 ---");
 

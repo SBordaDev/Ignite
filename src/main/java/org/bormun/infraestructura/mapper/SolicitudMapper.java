@@ -1,4 +1,4 @@
-package org.bormun.infraestructura.mapper.basededatos;
+package org.bormun.infraestructura.mapper;
 
 import org.bormun.dominio.modelos.DatosDeportista;
 import org.bormun.dominio.modelos.Deportista;
