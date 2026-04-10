@@ -1,19 +1,20 @@
 package org.bormun.infraestructura.controladores;
 
 import jakarta.validation.Valid;
-import org.bormun.aplicacion.dto.CategoriaRequestDTO;
-import org.bormun.aplicacion.dto.EventoRequestDTO;
-import org.bormun.aplicacion.dto.RestriccionesRequestDTO;
+import org.bormun.aplicacion.dto.request.EventoRequestDTO;
+import org.bormun.aplicacion.dto.response.EventoResumenDTO;
 import org.bormun.aplicacion.usecase.ConsultarEvento;
 import org.bormun.aplicacion.usecase.CrearEvento;
 import org.bormun.dominio.modelos.Evento;
-import org.bormun.dominio.modelos.Restricciones;
+import org.bormun.dominio.repositorios.EventoRepository;
+import org.bormun.infraestructura.entidades.EventoEntidad;
+import org.bormun.infraestructura.mapper.EventoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,11 +23,13 @@ public class EventoController {
 
     private final CrearEvento crearEventoUseCase;
     private final ConsultarEvento consultarEvento;
+    private final EventoRepository eventoRepository;
 
     // Inyectamos tu Caso de Uso
-    public EventoController(CrearEvento crearEventoUseCase, ConsultarEvento consultarEvento) {
+    public EventoController(CrearEvento crearEventoUseCase, ConsultarEvento consultarEvento, EventoRepository eventoRepository) {
         this.crearEventoUseCase = crearEventoUseCase;
         this.consultarEvento = consultarEvento;
+        this.eventoRepository = eventoRepository;
     }
 
     @PostMapping
@@ -34,7 +37,7 @@ public class EventoController {
 
         try {
             // 1. TRADUCCIÓN: De DTO (Web) a Dominio (Núcleo)
-            Evento eventoNuevo = getEventoNuevo(dto);
+            Evento eventoNuevo = EventoMapper.aDominio(dto);
 
             // 2. EJECUCIÓN: Le pasamos el dominio puro al Caso de Uso
             Evento eventoCreado = crearEventoUseCase.crearEvento(eventoNuevo);
@@ -57,35 +60,32 @@ public class EventoController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerEvento(@PathVariable Long id){
-        consultarEvento.obtenerPorId(id);
+    @GetMapping("/abiertos")
+    public ResponseEntity<List<EventoResumenDTO>> listarAbiertos() {
+        List<EventoResumenDTO> resumenes = consultarEvento.listarAbiertos().stream()
+                .map(EventoMapper::aResumenDTO)
+                .toList();
+        return ResponseEntity.ok(resumenes);
     }
 
-    @NonNull
-    private static Evento getEventoNuevo(EventoRequestDTO dto) {
-        Evento eventoNuevo = new Evento(dto.nombre());
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerDetallePublico(@PathVariable Long id){
+        try{
+            EventoEntidad entidad = consultarEvento.obtenerPorId(id);
+            return ResponseEntity.ok(EventoMapper.aDetallePublicoDTO(entidad));
 
-        for (CategoriaRequestDTO catDTO : dto.categorias()) {
-
-            RestriccionesRequestDTO restDTO = catDTO.restricciones();
-
-            // Construimos las restricciones de dominio
-            Restricciones restricciones = new Restricciones(
-                    restDTO.edadMinima(),
-                    restDTO.edadMaxima(),
-                    restDTO.generoNacimiento(),
-                    restDTO.numeroEquipo(),
-                    restDTO.numeroIntegrantesPorEquipo()
-            );
-
-            // Usamos el método que ya tienes en tu dominio para agregar categorías
-            eventoNuevo.agregarCategoria(
-                    catDTO.nombreCategoria(),
-                    catDTO.precioInscripcion(),
-                    restricciones
-            );
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
-        return eventoNuevo;
+    }
+
+    @GetMapping("/{id}/admin")
+    public ResponseEntity<?> obtenerDetalleCreador(@PathVariable Long id) {
+        try {
+            EventoEntidad entidad = consultarEvento.obtenerPorId(id);
+            return ResponseEntity.ok(EventoMapper.aDetalleCreadorDTO(entidad));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
     }
 }

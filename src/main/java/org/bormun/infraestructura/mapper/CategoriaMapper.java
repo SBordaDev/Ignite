@@ -1,13 +1,14 @@
 package org.bormun.infraestructura.mapper;
 
+import org.bormun.aplicacion.dto.request.DeportistaRequestDTO;
+import org.bormun.aplicacion.dto.request.EquipoRequestDTO;
+import org.bormun.aplicacion.dto.request.RestriccionesRequestDTO;
+import org.bormun.aplicacion.dto.response.CategoriaResponseDTO;
 import org.bormun.dominio.modelos.Categoria;
 import org.bormun.dominio.modelos.Equipo;
 import org.bormun.dominio.modelos.Restricciones;
 import org.bormun.dominio.modelos.Solicitud;
-import org.bormun.infraestructura.entidades.CategoriaEntidad;
-import org.bormun.infraestructura.entidades.EquipoEntidad;
-import org.bormun.infraestructura.entidades.RestriccionesEntidad;
-import org.bormun.infraestructura.entidades.SolicitudEntidad;
+import org.bormun.infraestructura.entidades.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,47 @@ public class CategoriaMapper {
                 restricciones.getGeneroNacimiento(),
                 restricciones.getNumeroEquipo(),
                 restricciones.getNumeroIntegrantesPorEquipo()
+        );
+    }
+
+    public static CategoriaResponseDTO aCategoriaResponseDTO(CategoriaEntidad entidad){
+        List<EquipoRequestDTO> equipos = new ArrayList<>();
+        for (EquipoEntidad equipo: entidad.getInscritos()){
+            equipos.add(aEquipoRequest(equipo));
+        }
+
+        return new CategoriaResponseDTO(
+                entidad.getId(),
+                entidad.getNombreCategoria(),
+                entidad.getPrecioInscripcion(),
+                equipos,
+                new RestriccionesRequestDTO(
+                        entidad.getRestricciones().getEdadMinima(),
+                        entidad.getRestricciones().getEdadMaxima(),
+                        entidad.getRestricciones().getGeneroNacimiento(),
+                        entidad.getRestricciones().getNumeroEquipo(),
+                        entidad.getRestricciones().getNumeroIntegrantesPorEquipo()
+                )
+        );
+    }
+
+    protected static EquipoRequestDTO aEquipoRequest(EquipoEntidad entidad){
+        List<DeportistaRequestDTO> deportistas = new ArrayList<>();
+        for(DeportistaEntidad deportista: entidad.getDeportistas()){
+            deportistas.add(aDeportistaRequest(deportista));
+        }
+        return new EquipoRequestDTO(
+                entidad.getNombreEquipo(),
+                deportistas
+        );
+    }
+
+    private static DeportistaRequestDTO aDeportistaRequest(DeportistaEntidad deportista){
+        return new DeportistaRequestDTO(
+                deportista.getNombre(),
+                Long.parseLong(deportista.getIdentificacion()),
+                deportista.getGeneroNacimiento(),
+                deportista.getFechaNacimiento()
         );
     }
 }

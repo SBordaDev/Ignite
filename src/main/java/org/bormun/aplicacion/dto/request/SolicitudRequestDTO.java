@@ -1,4 +1,4 @@
-package org.bormun.aplicacion.dto;
+package org.bormun.aplicacion.dto.request;
 
 public record SolicitudRequestDTO(
     String nombreOrganizacion,

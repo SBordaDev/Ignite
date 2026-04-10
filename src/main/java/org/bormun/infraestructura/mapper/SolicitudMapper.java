@@ -1,5 +1,6 @@
 package org.bormun.infraestructura.mapper;
 
+import org.bormun.aplicacion.dto.response.SolicitudResponseDTO;
 import org.bormun.dominio.modelos.DatosDeportista;
 import org.bormun.dominio.modelos.Deportista;
 import org.bormun.dominio.modelos.Equipo;
@@ -83,5 +84,19 @@ public class SolicitudMapper {
             ));
         }
         return dominio;
+    }
+
+    public static SolicitudResponseDTO aDTO(SolicitudEntidad entidad){
+        return new SolicitudResponseDTO(
+                entidad.getId(),
+                entidad.getNombreOrganizacion(),
+                entidad.getFechaSolicitud(),
+                entidad.getPagoConfirmado(),
+                entidad.getPrecioTotal(),
+                entidad.getEstadoSolicitud(),
+                CategoriaMapper.aEquipoRequest(entidad.getEquipo()),
+                entidad.getCategoria().getId(),
+                entidad.getCategoria().getNombreCategoria()
+        );
     }
 }

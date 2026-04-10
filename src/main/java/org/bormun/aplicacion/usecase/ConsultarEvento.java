@@ -17,18 +17,12 @@ public class ConsultarEvento {
         this.eventoRepository = eventoRepository;
     }
 
-    public Evento obtenerPorId(Long id){
-        return EventoMapper.aDominio(
-                eventoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("El evento con id ("+id+") no fue encontrado")));
+    public EventoEntidad obtenerPorId(Long id){
+        return eventoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El evento con el id ("+id+") no fue encontrado"));
     }
 
-    public List<Evento> listarAbiertos(){
-        List<Evento> respuesta = new ArrayList<>();
-        for (EventoEntidad x: eventoRepository.findByInscripcionAbiertaTrue()){
-            respuesta.add(EventoMapper.aDominio(x));
-        }
-
-        return  respuesta;
+    public List<EventoEntidad> listarAbiertos(){
+        return eventoRepository.findByInscripcionAbiertaTrue();
     }
 }

@@ -1,4 +1,4 @@
-package org.bormun.aplicacion.dto;
+package org.bormun.aplicacion.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

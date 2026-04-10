@@ -1,4 +1,4 @@
-package org.bormun.aplicacion.dto;
+package org.bormun.aplicacion.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
