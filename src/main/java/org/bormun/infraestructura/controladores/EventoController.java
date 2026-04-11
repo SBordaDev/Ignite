@@ -2,9 +2,11 @@ package org.bormun.infraestructura.controladores;
 
 import jakarta.validation.Valid;
 import org.bormun.aplicacion.dto.request.EventoRequestDTO;
+import org.bormun.aplicacion.dto.response.EventoDetallesCreadorDTO;
 import org.bormun.aplicacion.dto.response.EventoResumenDTO;
 import org.bormun.aplicacion.usecase.ConsultarEvento;
 import org.bormun.aplicacion.usecase.CrearEvento;
+import org.bormun.dominio.modelos.EstadoSolicitud;
 import org.bormun.dominio.modelos.Evento;
 import org.bormun.dominio.repositorios.EventoRepository;
 import org.bormun.infraestructura.entidades.EventoEntidad;
@@ -80,10 +82,14 @@ public class EventoController {
     }
 
     @GetMapping("/{id}/admin")
-    public ResponseEntity<?> obtenerDetalleCreador(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerDetalleCreador(
+            @PathVariable Long id,
+            @RequestParam(required = false)EstadoSolicitud estado)
+    {
         try {
             EventoEntidad entidad = consultarEvento.obtenerPorId(id);
-            return ResponseEntity.ok(EventoMapper.aDetalleCreadorDTO(entidad));
+            EventoDetallesCreadorDTO dtoFiltrado = EventoMapper.aDetalleCreadorDTO(entidad, estado);
+            return ResponseEntity.ok(dtoFiltrado);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }

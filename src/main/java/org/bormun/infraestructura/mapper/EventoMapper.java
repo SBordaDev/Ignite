@@ -99,14 +99,16 @@ public class EventoMapper {
         );
     }
 
-    public static EventoDetallesCreadorDTO aDetalleCreadorDTO(EventoEntidad entidad){
+    public static EventoDetallesCreadorDTO aDetalleCreadorDTO(EventoEntidad entidad, EstadoSolicitud estadoFiltro){
         List<CategoriaResponseDTO> categorias = new ArrayList<>();
         List<SolicitudResponseDTO> solicitudes = new ArrayList<>();
 
         for(CategoriaEntidad categoria: entidad.getCategorias()){
             categorias.add(CategoriaMapper.aCategoriaResponseDTO(categoria));
             for(SolicitudEntidad solicitud: categoria.getSolicitudes()){
-                solicitudes.add((SolicitudMapper.aDTO(solicitud)));
+                if (estadoFiltro == null || solicitud.getEstadoSolicitud() == estadoFiltro) {
+                    solicitudes.add(SolicitudMapper.aDTO(solicitud));
+                }
             }
         }
 
