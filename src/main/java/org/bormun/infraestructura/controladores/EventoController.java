@@ -25,13 +25,11 @@ public class EventoController {
 
     private final CrearEvento crearEventoUseCase;
     private final ConsultarEvento consultarEvento;
-    private final EventoRepository eventoRepository;
 
     // Inyectamos tu Caso de Uso
-    public EventoController(CrearEvento crearEventoUseCase, ConsultarEvento consultarEvento, EventoRepository eventoRepository) {
+    public EventoController(CrearEvento crearEventoUseCase, ConsultarEvento consultarEvento) {
         this.crearEventoUseCase = crearEventoUseCase;
         this.consultarEvento = consultarEvento;
-        this.eventoRepository = eventoRepository;
     }
 
     @PostMapping

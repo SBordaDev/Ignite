@@ -1,5 +1,6 @@
 package org.bormun.infraestructura.controladores;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import org.bormun.aplicacion.dto.request.ProcesarSolicitudDTO;
 import org.bormun.aplicacion.dto.request.SolicitudRequestDTO;
@@ -25,6 +26,7 @@ public class SolicitudController {
 
     // El POST es a nivel de evento, la categoría va por dentro del JSON
     @PostMapping("/eventos/{eventoId}/solicitudes")
+    @RateLimiter(name = "envioSolicitudes")
     public ResponseEntity<?> enviar(
             @PathVariable Long eventoId,
             @Valid @RequestBody SolicitudRequestDTO dto) {
