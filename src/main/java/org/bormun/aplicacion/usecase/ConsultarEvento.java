@@ -1,12 +1,9 @@
 package org.bormun.aplicacion.usecase;
 
-import org.bormun.dominio.modelos.Evento;
 import org.bormun.dominio.repositorios.EventoRepository;
 import org.bormun.infraestructura.entidades.EventoEntidad;
-import org.bormun.infraestructura.mapper.EventoMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

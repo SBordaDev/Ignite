@@ -1,6 +1,7 @@
 package org.bormun.aplicacion.usecase;
 
 import jakarta.transaction.Transactional;
+import org.bormun.aplicacion.dto.request.SolicitudRequestDTO;
 import org.bormun.dominio.excepciones.ErrorDeportista;
 import org.bormun.dominio.modelos.Solicitud;
 import org.bormun.dominio.excepciones.SolicitudInvalidaException;
@@ -13,6 +14,7 @@ import org.bormun.dominio.repositorios.SolicitudRepository;
 import org.bormun.infraestructura.entidades.CategoriaEntidad;
 import org.bormun.infraestructura.entidades.EventoEntidad;
 import org.bormun.infraestructura.entidades.SolicitudEntidad;
+import org.bormun.infraestructura.mapper.CategoriaMapper;
 import org.bormun.infraestructura.mapper.EventoMapper;
 import org.bormun.infraestructura.mapper.SolicitudMapper;
 import org.springframework.stereotype.Service;
@@ -32,56 +34,48 @@ public class EnviarSolicitud {
         this.solicitudRepository = solicitudRepository;
     }
 
-    public void enviarSolicitud(Long idEvento, Solicitud solicitud){
+    @Transactional
+    public void ejecutar(Long eventoId, SolicitudRequestDTO dto) {
 
+        // 1. Obtener el evento
+        EventoEntidad eventoEntidad = eventoRepository.findById(eventoId)
+                .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado"));
 
-        EventoEntidad eventoEntidad = eventoRepository.findById(idEvento)
-                .orElseThrow(() -> new IllegalArgumentException("El ID proporcionado no fue hayado para EVENTO"));
-
-        Evento evento = EventoMapper.aDominio(eventoEntidad);
-
-        if(!evento.isInscripcionAbierta()){
-            throw new SolicitudInvalidaException("Las inscripciones estan cerradas");
+        if (!eventoEntidad.isInscripcionAbierta()) {
+            throw new IllegalArgumentException("Las inscripciones para este evento están cerradas.");
         }
 
-        Categoria categoriaReal = evento.getCategorias().stream()
-                .filter(c -> c.getNombreCategoria().equals(solicitud.getCategoria().getNombreCategoria()))
+        // 2. Extraer la categoría específica usando el ID que viene en el DTO
+        CategoriaEntidad catEntidad = eventoEntidad.getCategorias().stream()
+                .filter(c -> c.getId().equals((long) dto.idCategoria()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("La categoría no existe"));
+                .orElseThrow(() -> new IllegalArgumentException("La categoría no pertenece a este evento"));
 
-        Equipo equipo = solicitud.getEquipo();
+        // 3. Traducción DTO -> Dominio para la validación
+        Categoria categoriaDominio = CategoriaMapper.aDominio(catEntidad);
+        Equipo equipoDominio = SolicitudMapper.aDominio(dto.equipo()); // ¡Transformamos el equipo!
 
-        List<ErrorDeportista> conErrores = new ArrayList<>();
-
-        for (Deportista deportista : equipo.getIntegrantes()) {
-            try{
-                categoriaReal.verificarDeportista(deportista);
-            } catch (ErrorDeportista e) {
-                conErrores.add(e);
-            }
-        }
-
-        if(!conErrores.isEmpty()){
-            throw new SolicitudInvalidaException("Deportistas no cumplen con los requisitos", conErrores);
-        }
-
-        categoriaReal.verificarEquipo(equipo);
-
-        Solicitud solicitudValida = new Solicitud(
-                solicitud.getNombreOrganizacion(),
-                equipo,
-                categoriaReal
+        // Construimos la solicitud
+        Solicitud nuevaSolicitud = new Solicitud(
+                dto.nombreOrganizacion(),
+                equipoDominio,
+                categoriaDominio
         );
 
+        // 4. Validaciones de Negocio (Edades, Género, Cupos)
+        for (var deportista : equipoDominio.getIntegrantes()) {
+            categoriaDominio.verificarDeportista(deportista);
+        }
+        categoriaDominio.verificarEquipo(equipoDominio);
 
-        solicitudValida.actualizarPrecioTotal(categoriaReal.getPrecioInscripcion());
+        nuevaSolicitud.actualizarPrecioTotal(categoriaDominio.getPrecioInscripcion());
 
-        SolicitudEntidad solicitudEntidad = SolicitudMapper.aEntidad(solicitudValida);
-        CategoriaEntidad catEntidadDestino = eventoEntidad.getCategorias().stream()
-                .filter(c -> c.getNombreCategoria().equals(categoriaReal.getNombreCategoria()))
-                .findFirst().get();
+        // 5. Traducción Dominio -> Entidad (Evitando clones)
+        SolicitudEntidad solicitudEntidad = SolicitudMapper.aEntidad(nuevaSolicitud);
 
-        solicitudEntidad.setCategoria(catEntidadDestino);
+        solicitudEntidad.setCategoria(catEntidad);
+
+        // 6. Guardar
         solicitudRepository.save(solicitudEntidad);
     }
 }

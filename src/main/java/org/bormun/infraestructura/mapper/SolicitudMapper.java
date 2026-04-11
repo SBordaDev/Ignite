@@ -1,5 +1,7 @@
 package org.bormun.infraestructura.mapper;
 
+import org.bormun.aplicacion.dto.request.DeportistaRequestDTO;
+import org.bormun.aplicacion.dto.request.EquipoRequestDTO;
 import org.bormun.aplicacion.dto.response.SolicitudResponseDTO;
 import org.bormun.dominio.modelos.DatosDeportista;
 import org.bormun.dominio.modelos.Deportista;
@@ -81,6 +83,19 @@ public class SolicitudMapper {
                     deportista.getIdentificacion(),
                     deportista.getGeneroNacimiento(),
                     deportista.getFechaNacimiento()
+            ));
+        }
+        return dominio;
+    }
+
+    public static Equipo aDominio(EquipoRequestDTO equipo){
+        Equipo dominio = new Equipo(equipo.nombreEquipo());
+        for(DeportistaRequestDTO deportista: equipo.integrantes()){
+            dominio.agregarIntegrante(new DatosDeportista(
+                    deportista.nombre(),
+                    deportista.identificacion().toString(),
+                    deportista.generoNacimiento(),
+                    deportista.fechaNacimiento()
             ));
         }
         return dominio;
