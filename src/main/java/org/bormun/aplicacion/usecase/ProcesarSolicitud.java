@@ -1,5 +1,7 @@
 package org.bormun.aplicacion.usecase;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
 import org.bormun.aplicacion.dto.request.ProcesarSolicitudDTO;
 import org.bormun.dominio.modelos.Categoria;
@@ -17,9 +19,11 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ProcesarSolicitud {
     private final SolicitudRepository solicitudRepository;
+    private final MeterRegistry meterRegistry;
 
-    public ProcesarSolicitud(SolicitudRepository solicitudRepository) {
+    public ProcesarSolicitud(SolicitudRepository solicitudRepository, MeterRegistry meterRegistry) {
         this.solicitudRepository = solicitudRepository;
+        this.meterRegistry = meterRegistry;
     }
 
     public void ejecutar(Long id, ProcesarSolicitudDTO data){
@@ -49,6 +53,12 @@ public class ProcesarSolicitud {
         }
 
         solicitudRepository.save(solicitudEntidad);
+
+        Counter.builder("ignite.solicitudes.procesadas")
+                .description("Número de solicitudes procesadas por los administradores")
+                .tag("estado_final", data.estado().name())
+                .register(meterRegistry)
+                .increment();
     }
 
 

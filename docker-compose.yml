@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ignite-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # Conecta el archivo que acabamos de crear hacia el contenedor
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ignite-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Tu contraseña para entrar
+    depends_on:
+      - prometheus
