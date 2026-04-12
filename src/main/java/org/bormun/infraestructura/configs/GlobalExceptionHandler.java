@@ -1,4 +1,4 @@
-package org.bormun.infraestructura.excepciones;
+package org.bormun.infraestructura.configs;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import org.bormun.dominio.excepciones.ErrorDeportista;
