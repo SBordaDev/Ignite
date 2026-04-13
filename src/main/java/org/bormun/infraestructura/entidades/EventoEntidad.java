@@ -19,6 +19,14 @@ public class EventoEntidad {
     @JoinColumn(name = "evento_id")
     private List<CategoriaEntidad> categorias = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creador_id", nullable = false)
+    private UsuarioEntidad creador;
+
+    // No olvides agregar el Getter y el Setter
+    public UsuarioEntidad getCreador() { return creador; }
+    public void setCreador(UsuarioEntidad creador) { this.creador = creador; }
+
     public EventoEntidad(){}
 
     public Long getId() { return id; }

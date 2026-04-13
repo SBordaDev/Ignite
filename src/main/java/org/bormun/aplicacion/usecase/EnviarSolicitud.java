@@ -1,17 +1,17 @@
 package org.bormun.aplicacion.usecase;
 
 import jakarta.transaction.Transactional;
-import org.bormun.aplicacion.dto.request.SolicitudRequestDTO;
+import org.bormun.presentacion.dto.request.SolicitudRequestDTO;
 import org.bormun.dominio.modelos.Solicitud;
 import org.bormun.dominio.modelos.Categoria;
 import org.bormun.dominio.modelos.Equipo;
-import org.bormun.dominio.repositorios.EventoRepository;
-import org.bormun.dominio.repositorios.SolicitudRepository;
+import org.bormun.aplicacion.repositorios.EventoRepository;
+import org.bormun.aplicacion.repositorios.SolicitudRepository;
 import org.bormun.infraestructura.entidades.CategoriaEntidad;
 import org.bormun.infraestructura.entidades.EventoEntidad;
 import org.bormun.infraestructura.entidades.SolicitudEntidad;
-import org.bormun.infraestructura.mapper.CategoriaMapper;
-import org.bormun.infraestructura.mapper.SolicitudMapper;
+import org.bormun.aplicacion.mapper.CategoriaMapper;
+import org.bormun.aplicacion.mapper.SolicitudMapper;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -2,7 +2,7 @@ package org.bormun.evento;
 
 import org.bormun.dominio.modelos.*;
 import org.bormun.infraestructura.entidades.*;
-import org.bormun.infraestructura.mapper.EventoMapper;
+import org.bormun.aplicacion.mapper.EventoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

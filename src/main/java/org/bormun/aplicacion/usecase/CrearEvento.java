@@ -1,9 +1,10 @@
 package org.bormun.aplicacion.usecase;
 
 import org.bormun.dominio.modelos.Evento;
-import org.bormun.dominio.repositorios.EventoRepository; // Asumiendo que esta es tu interfaz
+import org.bormun.aplicacion.repositorios.EventoRepository; // Asumiendo que esta es tu interfaz
 import org.bormun.infraestructura.entidades.EventoEntidad;
-import org.bormun.infraestructura.mapper.EventoMapper;
+import org.bormun.infraestructura.entidades.UsuarioEntidad;
+import org.bormun.aplicacion.mapper.EventoMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class CrearEvento {
      * y coordina su persistencia en la base de datos.
      */
     @Transactional
-    public Evento crearEvento(Evento eventoNuevo) {
+    public Evento crearEvento(Evento eventoNuevo, UsuarioEntidad creador) {
 
         // 1. Reglas de Negocio Centrales (Opcional)
         // Como las validaciones de edades y cupos ya están en la clase Restricciones,
@@ -46,6 +47,7 @@ public class CrearEvento {
         // 2. Traducción hacia el Adaptador de Salida (Base de Datos)
         // El Mapper se encarga de desarmar el Evento y sus Categorías en Entidades
         EventoEntidad entidadParaGuardar = EventoMapper.aEntidad(eventoNuevo);
+        entidadParaGuardar.setCreador(creador);
 
         // 3. Persistencia
         // Gracias a la Cascada (CascadeType.ALL) en tu EventoEntidad,

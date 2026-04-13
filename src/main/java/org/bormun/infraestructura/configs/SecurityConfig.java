@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,26 +27,33 @@ public class SecurityConfig {
                 // 2. Le decimos a Spring que nuestra API es "Stateless" (Sin estado/No guarda sesiones en memoria)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+
                 // 3. ¡LAS REGLAS DEL JUEGO!
                 .authorizeHttpRequests(auth -> auth
 
                         // --- RUTAS PÚBLICAS (Sin token) ---
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll() // Para poder iniciar sesión
-                        .requestMatchers(HttpMethod.POST, "/api/auth/registro").permitAll() // Para crear usuarios
-                        .requestMatchers(HttpMethod.GET, "/api/eventos/abiertos").permitAll() // Ver torneos disponibles
+                        .requestMatchers("/actuator/prometheus").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
 
                         // --- RUTAS EXCLUSIVAS DEL ADMIN ---
-                        .requestMatchers(HttpMethod.POST, "/api/eventos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/eventos/*/admin").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/solicitudes/*/procesar").hasRole("ADMIN")
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/usuarios/*/rol").hasRole("ADMIN")  // Escalar privilegios a usuarios
 
-                        // --- RUTAS EXCLUSIVAS DEL EQUIPO ---
-                        .requestMatchers(HttpMethod.POST, "/api/eventos/*/solicitudes").hasRole("EQUIPO")
+                        // --- RUTAS EVENTO CONTROLLER ---
+                        .requestMatchers(HttpMethod.POST, "/api/eventos").hasRole("CREADOR")        // Creacion de eventos
+                        .requestMatchers(HttpMethod.GET, "/api/eventos/*").permitAll()              // Info publica evento especifico
+                        .requestMatchers(HttpMethod.GET, "/api/eventos/*/admin").hasRole("CREADOR") // Info privada evento creador
+                        .requestMatchers(HttpMethod.GET, "/api/eventos/abiertos").permitAll()       // Ver torneos disponibles
 
-                        // --- RUTAS COMPARTIDAS ---
-                        // Ver detalle del evento (ambos pueden)
-                        .requestMatchers(HttpMethod.GET, "/api/eventos/*").hasAnyRole("ADMIN", "EQUIPO")
+                        // --- RUTAS SOLICITUD CONTROLLER ---
+                        .requestMatchers(HttpMethod.PATCH, "/api/solicitudes/*/procesar").hasAnyRole("CREADOR", "ADMIN")// Procesar la solicitud
+                        .requestMatchers(HttpMethod.POST, "/api/eventos/*/solicitudes").hasAnyRole("EQUIPO", "CREADOR") // Enviar solicitud
+
+                        // --- RUTAS AUTH CONTROLLER ---
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()    // Para poder iniciar sesión
+                        .requestMatchers(HttpMethod.POST, "/api/auth/registro").permitAll() // Para crear usuarios
 
                         // --- CUALQUIER OTRA RUTA ---
                         // Por seguridad, si se nos olvida poner una ruta aquí, bloqueamos por defecto

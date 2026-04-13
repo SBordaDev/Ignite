@@ -3,32 +3,45 @@ package org.bormun.aplicacion.usecase;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.transaction.Transactional;
-import org.bormun.aplicacion.dto.request.ProcesarSolicitudDTO;
+import org.bormun.presentacion.dto.request.ProcesarSolicitudDTO;
 import org.bormun.dominio.modelos.Categoria;
 import org.bormun.dominio.modelos.Equipo;
 import org.bormun.dominio.modelos.EstadoSolicitud;
-import org.bormun.dominio.repositorios.SolicitudRepository;
-import org.bormun.infraestructura.entidades.CategoriaEntidad;
-import org.bormun.infraestructura.entidades.EquipoEntidad;
-import org.bormun.infraestructura.entidades.SolicitudEntidad;
-import org.bormun.infraestructura.mapper.CategoriaMapper;
-import org.bormun.infraestructura.mapper.SolicitudMapper;
+import org.bormun.dominio.modelos.Roles;
+import org.bormun.aplicacion.repositorios.EventoRepository;
+import org.bormun.aplicacion.repositorios.SolicitudRepository;
+import org.bormun.infraestructura.entidades.*;
+import org.bormun.aplicacion.mapper.CategoriaMapper;
+import org.bormun.aplicacion.mapper.SolicitudMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class ProcesarSolicitud {
+    private final EventoRepository eventoRepository;
     private final SolicitudRepository solicitudRepository;
     private final MeterRegistry meterRegistry;
 
-    public ProcesarSolicitud(SolicitudRepository solicitudRepository, MeterRegistry meterRegistry) {
+    public ProcesarSolicitud(EventoRepository eventoRepository, SolicitudRepository solicitudRepository, MeterRegistry meterRegistry) {
+        this.eventoRepository = eventoRepository;
         this.solicitudRepository = solicitudRepository;
         this.meterRegistry = meterRegistry;
     }
 
-    public void ejecutar(Long id, ProcesarSolicitudDTO data){
+    public void ejecutar(Long id, ProcesarSolicitudDTO data, UsuarioEntidad usuarioAutenticado){
         SolicitudEntidad solicitudEntidad = solicitudRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La solicitud con id ("+id+") no fue encontrada"));
+
+
+        EventoEntidad eventoDelTorneo = eventoRepository.findEventoBySolicitudId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado para esta solicitud"));
+
+        boolean esAdmin = usuarioAutenticado.getRol() == Roles.ADMIN;
+        boolean esDuenoDelEvento = eventoDelTorneo.getCreador().getId().equals(usuarioAutenticado.getId());
+
+        if (!esAdmin && !esDuenoDelEvento) {
+            throw new IllegalArgumentException("Acceso Denegado: No tienes permiso para modificar un evento que no creaste.");
+        }
 
         if (solicitudEntidad.getEstadoSolicitud() != EstadoSolicitud.EN_PROCESO) {
             throw new IllegalArgumentException("Esta solicitud ya fue procesada previamente y no puede ser modificada.");

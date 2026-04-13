@@ -36,5 +36,9 @@ public class UsuarioEntidad {
     public String getPassword() { return password; }
     public Roles getRol() { return rol; }
 
+    public void setRol(Roles rol) {
+        this.rol = rol;
+    }
+
     public void setPassword(String password) { this.password = password; }
 }

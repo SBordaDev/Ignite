@@ -1,19 +1,12 @@
 package org.bormun;
 
-import org.bormun.aplicacion.usecase.EnviarSolicitud;
-import org.bormun.dominio.modelos.*;
-import org.bormun.dominio.repositorios.EventoRepository;
-import org.bormun.dominio.repositorios.SolicitudRepository;
-import org.bormun.infraestructura.entidades.EventoEntidad;
-import org.bormun.infraestructura.mapper.EventoMapper;
+import org.bormun.aplicacion.repositorios.EventoRepository;
+import org.bormun.aplicacion.repositorios.SolicitudRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 @SpringBootApplication
 public class App {
