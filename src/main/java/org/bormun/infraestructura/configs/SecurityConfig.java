@@ -54,6 +54,7 @@ public class SecurityConfig {
                         // --- RUTAS AUTH CONTROLLER ---
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()    // Para poder iniciar sesión
                         .requestMatchers(HttpMethod.POST, "/api/auth/registro").permitAll() // Para crear usuarios
+                        .requestMatchers(HttpMethod.GET, "/api/auth/usuarios/*/obtener").hasRole("ADMIN")
 
                         // --- CUALQUIER OTRA RUTA ---
                         // Por seguridad, si se nos olvida poner una ruta aquí, bloqueamos por defecto
