@@ -38,5 +38,8 @@ build/
 ### Mac OS ###
 .DS_Store
 
+.allure
+.idea
+
 ignitedb.mv.db
 ignitedb.trace.db
