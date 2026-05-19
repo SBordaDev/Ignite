@@ -92,7 +92,6 @@ public class AuthController {
                     .body(Map.of("error", "El correo ya está registrado"));
         }
 
-        // 🔥 LA MAGIA DE BCRYPT: Encriptamos la contraseña antes de guardarla
         String contrasenaEncriptada = passwordEncoder.encode(dto.password());
 
         // Creamos y guardamos el usuario

@@ -50,6 +50,25 @@ class EventoControllerTest {
     // Variable dinámica para simular diferentes estados de sesión por prueba (Admin, Dueño, Otro)
     private UsuarioEntidad usuarioAutenticadoMock;
 
+    private String eventoJsonRequest = """
+            {
+              "nombre": "Evento Nacional",
+              "categorias": [
+                {
+                  "nombreCategoria": "Senior Masculino",
+                  "precioInscripcion": 50000,
+                  "restricciones": {
+                    "edadMinima": 18,
+                    "edadMaxima": 35,
+                    "generoNacimiento": "HOMBRE",
+                    "numeroEquipo": 2,
+                    "numeroIntegrantesPorEquipo": 5
+                  }
+                }
+              ]
+            }
+            """;
+
     @BeforeEach
     void setUp() {
         // Inicializamos un usuario por defecto
@@ -79,12 +98,6 @@ class EventoControllerTest {
 
     @Test
     void crearNuevoEvento_DeberiaRetornar201_CuandoEsExitoso() throws Exception {
-        // Arrange
-        // JSON mínimo válido para que EventoMapper.aDominio(dto) no lance NullPointerException
-        String jsonRequest = "{\n" +
-                "  \"nombre\": \"Torneo de Verano\",\n" +
-                "  \"categorias\": []\n" +
-                "}";
 
         Evento eventoMock = new Evento("Torneo de Verano");
         eventoMock.setId(100L); // Simulamos que la BD le asignó el ID 100
@@ -95,7 +108,7 @@ class EventoControllerTest {
         // Act & Assert
         mockMvc.perform(post("/api/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
+                        .content(eventoJsonRequest))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.mensaje").value("Evento creado exitosamente"))
                 .andExpect(jsonPath("$.eventoId").value(100));
@@ -103,11 +116,6 @@ class EventoControllerTest {
 
     @Test
     void crearNuevoEvento_DeberiaRetornar400_CuandoFallaValidacionDeNegocio() throws Exception {
-        // Arrange
-        String jsonRequest = "{\n" +
-                "  \"nombre\": \"Torneo de Verano\",\n" +
-                "  \"categorias\": []\n" +
-                "}";
 
         when(crearEventoUseCase.crearEvento(any(Evento.class), any(UsuarioEntidad.class)))
                 .thenThrow(new IllegalArgumentException("El nombre del evento ya existe"));
@@ -115,18 +123,13 @@ class EventoControllerTest {
         // Act & Assert
         mockMvc.perform(post("/api/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
+                        .content(eventoJsonRequest))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("El nombre del evento ya existe"));
     }
 
     @Test
     void crearNuevoEvento_DeberiaRetornar500_CuandoHayErrorInterno() throws Exception {
-        // Arrange
-        String jsonRequest = "{\n" +
-                "  \"nombre\": \"Torneo de Verano\",\n" +
-                "  \"categorias\": []\n" +
-                "}";
 
         when(crearEventoUseCase.crearEvento(any(Evento.class), any(UsuarioEntidad.class)))
                 .thenThrow(new RuntimeException("Falla de base de datos"));
@@ -134,7 +137,7 @@ class EventoControllerTest {
         // Act & Assert
         mockMvc.perform(post("/api/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
+                        .content(eventoJsonRequest))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error").value("Ocurrió un error en el servidor al guardar el evento"));
     }

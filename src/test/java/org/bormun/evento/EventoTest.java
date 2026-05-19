@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class InscripcionesTest {
+class EventoTest {
     private Evento evento;
 
     private final String CAT_MASCULINA = "Categoria Juevenil Masculina";
