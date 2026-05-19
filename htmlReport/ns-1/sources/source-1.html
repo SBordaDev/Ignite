@@ -1,0 +1,167 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > App</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun</a>
+</div>
+
+<h1>Coverage Summary for Class: App (org.bormun)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">App</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun;
+&nbsp;
+&nbsp;import org.bormun.aplicacion.repositorios.EventoRepository;
+&nbsp;import org.bormun.aplicacion.repositorios.SolicitudRepository;
+&nbsp;import org.springframework.boot.CommandLineRunner;
+&nbsp;import org.springframework.boot.SpringApplication;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.transaction.support.TransactionTemplate;
+&nbsp;
+&nbsp;@SpringBootApplication
+<b class="nc">&nbsp;public class App {</b>
+&nbsp;
+&nbsp;    public static void main(String[] args) {
+<b class="nc">&nbsp;        SpringApplication.run(App.class, args);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public CommandLineRunner probarRelaciones(EventoRepository eventoRepo, TransactionTemplate transactionTemplate, SolicitudRepository solicitudRepo) {
+<b class="nc">&nbsp;        return args -&gt; {</b>
+&nbsp;
+<b class="nc">&nbsp;            transactionTemplate.execute(status -&gt; {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;--- INICIANDO PRUEBA DE BASE DE DATOS IGNITE ---&quot;);</b>
+&nbsp;                //Evento evento = new Evento(&quot;Evento test IGNITE&quot;);
+&nbsp;                //evento.agregarCategoria(&quot;CAT_MASCULINA&quot;, 5000, new Restricciones(10, 50, GeneroNacimiento.HOMBRE, 4, 2));
+&nbsp;                //evento.agregarCategoria(&quot;CAT_FEMENUNA&quot;, 2500, new Restricciones(10, 50, GeneroNacimiento.MUJER, 4, 2));
+&nbsp;
+&nbsp;                //eventoRepo.save(EventoMapper.aEntidad(evento));
+&nbsp;
+&nbsp;                //Optional&lt;EventoEntidad&gt; resultado = eventoRepo.findById(1L);
+&nbsp;
+&nbsp;                //if (resultado.isPresent()) {
+&nbsp;                //    EventoEntidad entidadEncontrada = resultado.get();
+&nbsp;
+&nbsp;                //    Evento miEvento = EventoMapper.aDominio(entidadEncontrada);
+&nbsp;
+&nbsp;                //    Equipo equipo = new Equipo(&quot;Equipo 3 test&quot;);
+&nbsp;                //    equipo.agregarIntegrante(new DatosDeportista(&quot;Ricardo&quot;, &quot;1014&quot;, GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
+&nbsp;                //    equipo.agregarIntegrante(new DatosDeportista(&quot;Guillermo&quot;, &quot;1015&quot;, GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
+&nbsp;
+&nbsp;                //    Equipo equipo2 = new Equipo(&quot;Equipo 4 test&quot;);
+&nbsp;                //    equipo2.agregarIntegrante(new DatosDeportista(&quot;Samuel&quot;, &quot;1016&quot;, GeneroNacimiento.HOMBRE, LocalDate.of(2006, 1, 1)));
+&nbsp;                //    equipo2.agregarIntegrante(new DatosDeportista(&quot;Juan&quot;, &quot;1017&quot;, GeneroNacimiento.HOMBRE, LocalDate.of(2006,2,1)));
+&nbsp;
+&nbsp;                //    Solicitud solicitud = new Solicitud(&quot;ALL MIGHTY&quot;, equipo, miEvento.getCategorias().get(0));
+&nbsp;                //    Solicitud solicitud2 = new Solicitud(&quot;IGNITE PRO TEAM&quot;, equipo2, miEvento.getCategorias().get(0));
+&nbsp;
+&nbsp;                //    EnviarSolicitud env = new EnviarSolicitud(eventoRepo, solicitudRepo);
+&nbsp;                //    env.enviarSolicitud(1L,solicitud);
+&nbsp;                //    env.enviarSolicitud(1L,solicitud2);
+&nbsp;
+&nbsp;                //} else {
+&nbsp;                //    System.out.println(&quot;El evento no existe en la base de datos.&quot;);
+&nbsp;                //}
+&nbsp;
+<b class="nc">&nbsp;                System.out.println(&quot;--- PRUEBA TERMINADA: Ve a tu consola H2 ---&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                return null;</b>
+&nbsp;            });
+&nbsp;
+&nbsp;        };
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RestriccionesEntidad</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun.infraestructura.entidades</a>
+</div>
+
+<h1>Coverage Summary for Class: RestriccionesEntidad (org.bormun.infraestructura.entidades)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RestriccionesEntidad</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    54,5%
+  </span>
+  <span class="absValue">
+    (6/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    54,5%
+  </span>
+  <span class="absValue">
+    (6/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun.infraestructura.entidades;
+&nbsp;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Embeddable;
+&nbsp;import jakarta.persistence.EnumType;
+&nbsp;import jakarta.persistence.Enumerated;
+&nbsp;import org.bormun.dominio.modelos.GeneroNacimiento;
+&nbsp;import org.springframework.lang.NonNull;
+&nbsp;
+&nbsp;@Embeddable
+&nbsp;public class RestriccionesEntidad {
+&nbsp;    private int edadMinima;
+&nbsp;
+&nbsp;    private int edadMaxima;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    private GeneroNacimiento generoNacimiento;
+&nbsp;
+&nbsp;    private int numeroEquipo;
+&nbsp;
+&nbsp;    private int numeroIntegrantesPorEquipo;
+&nbsp;
+<b class="fc">&nbsp;    public RestriccionesEntidad(){}</b>
+&nbsp;
+&nbsp;    public int getEdadMinima() {
+<b class="nc">&nbsp;        return edadMinima;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getEdadMaxima() {
+<b class="nc">&nbsp;        return edadMaxima;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getNumeroEquipo() {
+<b class="nc">&nbsp;        return numeroEquipo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getNumeroIntegrantesPorEquipo() {
+<b class="nc">&nbsp;        return numeroIntegrantesPorEquipo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public GeneroNacimiento getGeneroNacimiento() {
+<b class="nc">&nbsp;        return generoNacimiento;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEdadMaxima(int edadMaxima) {
+<b class="fc">&nbsp;        this.edadMaxima = edadMaxima;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEdadMinima(int edadMinima) {
+<b class="fc">&nbsp;        this.edadMinima = edadMinima;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGeneroNacimiento(GeneroNacimiento generoNacimiento) {
+<b class="fc">&nbsp;        this.generoNacimiento = generoNacimiento;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNumeroEquipo(int numeroEquipo) {
+<b class="fc">&nbsp;        this.numeroEquipo = numeroEquipo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNumeroIntegrantesPorEquipo(int numeroIntegrantesPorEquipo) {
+<b class="fc">&nbsp;        this.numeroIntegrantesPorEquipo = numeroIntegrantesPorEquipo;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

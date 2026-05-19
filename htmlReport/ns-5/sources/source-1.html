@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Categoria</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun.dominio.modelos</a>
+</div>
+
+<h1>Coverage Summary for Class: Categoria (org.bormun.dominio.modelos)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Categoria</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96,4%
+  </span>
+  <span class="absValue">
+    (27/28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun.dominio.modelos;
+&nbsp;
+&nbsp;import org.bormun.dominio.excepciones.ErrorDeportista;
+&nbsp;import org.bormun.dominio.excepciones.SolicitudInvalidaException;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class Categoria {
+&nbsp;    private Long id;
+&nbsp;    private final String nombreCategoria;
+&nbsp;    private final int precioInscripcion;
+&nbsp;    private List&lt;Equipo&gt; inscritos;
+&nbsp;    private final Restricciones restricciones;
+&nbsp;
+<b class="fc">&nbsp;    public Categoria(String nombreCategoria, int precioInscripcion, Restricciones restricciones){</b>
+<b class="fc">&nbsp;        this.nombreCategoria = nombreCategoria;</b>
+<b class="fc">&nbsp;        this.precioInscripcion = precioInscripcion;</b>
+<b class="fc">&nbsp;        this.inscritos = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.restricciones = restricciones;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void verificarDeportista(Deportista deportista){
+<b class="fc">&nbsp;        int edad = deportista.getEdad();</b>
+<b class="fc">&nbsp;        GeneroNacimiento genero = deportista.getGenero();</b>
+&nbsp;
+<b class="fc">&nbsp;            int edadMaxima = restricciones.edadMaxima();</b>
+<b class="fc">&nbsp;            int edadMinima = restricciones.edadMinima();</b>
+<b class="fc">&nbsp;            GeneroNacimiento generoCategoria = restricciones.generoNacimiento();</b>
+&nbsp;
+<b class="pc">&nbsp;        if (edad &gt; edadMaxima || edad &lt; edadMinima){</b>
+<b class="fc">&nbsp;            throw new ErrorDeportista(deportista, MotivoErrorDeportista.EDAD_INVALIDA);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (genero != generoCategoria){</b>
+<b class="fc">&nbsp;            throw new ErrorDeportista(deportista, MotivoErrorDeportista.GENERO_INVALIDO);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void verificarEquipo(Equipo equipo){
+<b class="fc">&nbsp;        List&lt;Deportista&gt; deportistas = equipo.getIntegrantes();</b>
+<b class="fc">&nbsp;        int integrantesMaximos = restricciones.numeroIntegrantesPorEquipo();</b>
+<b class="fc">&nbsp;        int equiposMaximos = restricciones.numeroEquipo();</b>
+&nbsp;
+<b class="fc">&nbsp;        if(deportistas.size() &gt; integrantesMaximos){</b>
+<b class="fc">&nbsp;            throw new SolicitudInvalidaException(&quot;El Equipo es demasiado grande para el torneo&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(equiposMaximos == inscritos.size()){</b>
+<b class="fc">&nbsp;            throw new SolicitudInvalidaException(&quot;Ya no se pueden inscribir mas equipos a esta categoria&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public void agregarEquipo(Equipo equipo){
+<b class="fc">&nbsp;        inscritos.add(equipo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Equipo&gt; getInscritos() {
+<b class="fc">&nbsp;        return inscritos;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNombreCategoria() {
+<b class="fc">&nbsp;        return nombreCategoria;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getPrecioInscripcion() {
+<b class="fc">&nbsp;        return precioInscripcion;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Restricciones getRestricciones() {
+<b class="fc">&nbsp;        return restricciones;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

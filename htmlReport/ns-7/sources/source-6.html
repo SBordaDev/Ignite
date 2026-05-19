@@ -1,0 +1,213 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SolicitudEntidad</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun.infraestructura.entidades</a>
+</div>
+
+<h1>Coverage Summary for Class: SolicitudEntidad (org.bormun.infraestructura.entidades)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SolicitudEntidad</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68,4%
+  </span>
+  <span class="absValue">
+    (13/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68,4%
+  </span>
+  <span class="absValue">
+    (13/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun.infraestructura.entidades;
+&nbsp;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import org.bormun.dominio.modelos.EstadoSolicitud;
+&nbsp;import org.springframework.format.annotation.DateTimeFormat;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;solicitudes&quot;)
+<b class="fc">&nbsp;public class SolicitudEntidad {</b>
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    private String nombreOrganizacion;
+&nbsp;
+&nbsp;    @DateTimeFormat
+&nbsp;    private LocalDate fechaSolicitud;
+&nbsp;
+&nbsp;    private Boolean pagoConfirmado;
+&nbsp;
+&nbsp;    private int precioTotal;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    private EstadoSolicitud estadoSolicitud;
+&nbsp;
+&nbsp;    private String comentarios;
+&nbsp;
+&nbsp;    @ManyToOne(cascade = CascadeType.ALL)
+&nbsp;    @JoinColumn(name = &quot;equipo_id&quot;)
+&nbsp;    private EquipoEntidad equipo;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;categoria_id&quot;)
+&nbsp;    private CategoriaEntidad categoria;
+&nbsp;
+&nbsp;    public String getComentarios() {
+<b class="nc">&nbsp;        return comentarios;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setComentarios(String comentarios) {
+<b class="fc">&nbsp;        this.comentarios = comentarios;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public EquipoEntidad getEquipo() {
+<b class="fc">&nbsp;        return equipo;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEquipo(EquipoEntidad equipos) {
+<b class="fc">&nbsp;        this.equipo = equipos;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public EstadoSolicitud getEstadoSolicitud() {
+<b class="nc">&nbsp;        return estadoSolicitud;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEstadoSolicitud(EstadoSolicitud estadoSolicitud) {
+<b class="fc">&nbsp;        this.estadoSolicitud = estadoSolicitud;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public LocalDate getFechaSolicitud() {
+<b class="nc">&nbsp;        return fechaSolicitud;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFechaSolicitud(LocalDate fechaSolicitud) {
+<b class="fc">&nbsp;        this.fechaSolicitud = fechaSolicitud;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNombreOrganizacion() {
+<b class="fc">&nbsp;        return nombreOrganizacion;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNombreOrganizacion(String nombreOrganizacion) {
+<b class="fc">&nbsp;        this.nombreOrganizacion = nombreOrganizacion;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Boolean getPagoConfirmado() {
+<b class="nc">&nbsp;        return pagoConfirmado;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPagoConfirmado(Boolean pagoConfirmado) {
+<b class="fc">&nbsp;        this.pagoConfirmado = pagoConfirmado;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getPrecioTotal() {
+<b class="nc">&nbsp;        return precioTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrecioTotal(int precioTotal) {
+<b class="fc">&nbsp;        this.precioTotal = precioTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public CategoriaEntidad getCategoria() {
+<b class="fc">&nbsp;        return categoria;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCategoria(CategoriaEntidad categoria) {
+<b class="fc">&nbsp;        this.categoria = categoria;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

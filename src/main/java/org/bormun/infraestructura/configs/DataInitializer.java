@@ -24,7 +24,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         String correoAdmin = "admin@gmail.com";
 
-        if (usuarioRepository.findByEmail(correoAdmin).isEmpty()) {
+        if (!usuarioRepository.existsByEmail(correoAdmin)) {
             UsuarioEntidad superAdmin = new UsuarioEntidad(
                     correoAdmin,
                     passwordEncoder.encode("@Ignite°10"),

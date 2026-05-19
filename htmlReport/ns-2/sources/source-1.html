@@ -1,0 +1,236 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CategoriaMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun.aplicacion.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: CategoriaMapper (org.bormun.aplicacion.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CategoriaMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    38,3%
+  </span>
+  <span class="absValue">
+    (23/60)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun.aplicacion.mapper;
+&nbsp;
+&nbsp;import org.bormun.presentacion.dto.request.DeportistaRequestDTO;
+&nbsp;import org.bormun.presentacion.dto.request.EquipoRequestDTO;
+&nbsp;import org.bormun.presentacion.dto.request.RestriccionesRequestDTO;
+&nbsp;import org.bormun.presentacion.dto.response.CategoriaResponseDTO;
+&nbsp;import org.bormun.dominio.modelos.Categoria;
+&nbsp;import org.bormun.dominio.modelos.Equipo;
+&nbsp;import org.bormun.dominio.modelos.Restricciones;
+&nbsp;import org.bormun.dominio.modelos.Solicitud;
+&nbsp;import org.bormun.infraestructura.entidades.*;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class CategoriaMapper {</b>
+&nbsp;    public static CategoriaEntidad aEntidad(Categoria categoria, List&lt;Solicitud&gt; solDelCategoria){
+<b class="fc">&nbsp;        CategoriaEntidad entidad = new CategoriaEntidad();</b>
+<b class="fc">&nbsp;        List&lt;SolicitudEntidad&gt; solicitudes = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;EquipoEntidad&gt; inscritos = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        entidad.setId(categoria.getId());</b>
+<b class="fc">&nbsp;        entidad.setNombreCategoria(categoria.getNombreCategoria());</b>
+<b class="fc">&nbsp;        entidad.setPrecioInscripcion(categoria.getPrecioInscripcion());</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Solicitud solicitud: solDelCategoria){</b>
+<b class="fc">&nbsp;            SolicitudEntidad solicitudTraducida = SolicitudMapper.aEntidad(solicitud);</b>
+<b class="fc">&nbsp;            solicitudTraducida.setCategoria(entidad);</b>
+&nbsp;
+<b class="fc">&nbsp;            solicitudes.add(solicitudTraducida);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        entidad.setSolicitudes(solicitudes);</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Equipo equipo: categoria.getInscritos()){</b>
+<b class="fc">&nbsp;            inscritos.add(SolicitudMapper.aEntidad(equipo));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        entidad.setInscritos(inscritos);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        entidad.setRestricciones(aEntidad(categoria.getRestricciones()));</b>
+&nbsp;
+<b class="fc">&nbsp;        return entidad;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static RestriccionesEntidad aEntidad(Restricciones restricciones){
+<b class="fc">&nbsp;        RestriccionesEntidad entidad = new RestriccionesEntidad();</b>
+&nbsp;
+<b class="fc">&nbsp;        entidad.setEdadMaxima(restricciones.edadMaxima());</b>
+<b class="fc">&nbsp;        entidad.setEdadMinima(restricciones.edadMinima());</b>
+<b class="fc">&nbsp;        entidad.setGeneroNacimiento(restricciones.generoNacimiento());</b>
+<b class="fc">&nbsp;        entidad.setNumeroEquipo(restricciones.numeroEquipo());</b>
+<b class="fc">&nbsp;        entidad.setNumeroIntegrantesPorEquipo(restricciones.numeroIntegrantesPorEquipo());</b>
+&nbsp;
+<b class="fc">&nbsp;        return entidad;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Categoria aDominio(CategoriaEntidad categoria){
+<b class="nc">&nbsp;        Categoria dominio = new Categoria(</b>
+<b class="nc">&nbsp;                categoria.getNombreCategoria(),</b>
+<b class="nc">&nbsp;                categoria.getPrecioInscripcion(),</b>
+<b class="nc">&nbsp;                aDominio(categoria.getRestricciones())</b>
+&nbsp;        );
+<b class="nc">&nbsp;        dominio.setId(categoria.getId());</b>
+<b class="nc">&nbsp;        for (EquipoEntidad equipo: categoria.getInscritos()){</b>
+<b class="nc">&nbsp;            dominio.agregarEquipo(SolicitudMapper.aDominio(equipo));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return dominio;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Restricciones aDominio(RestriccionesEntidad restricciones){
+<b class="nc">&nbsp;        return new Restricciones(</b>
+<b class="nc">&nbsp;                restricciones.getEdadMinima(),</b>
+<b class="nc">&nbsp;                restricciones.getEdadMaxima(),</b>
+<b class="nc">&nbsp;                restricciones.getGeneroNacimiento(),</b>
+<b class="nc">&nbsp;                restricciones.getNumeroEquipo(),</b>
+<b class="nc">&nbsp;                restricciones.getNumeroIntegrantesPorEquipo()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    public static CategoriaResponseDTO aCategoriaResponseDTO(CategoriaEntidad entidad){
+<b class="nc">&nbsp;        List&lt;EquipoRequestDTO&gt; equipos = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (EquipoEntidad equipo: entidad.getInscritos()){</b>
+<b class="nc">&nbsp;            equipos.add(aEquipoRequest(equipo));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new CategoriaResponseDTO(</b>
+<b class="nc">&nbsp;                entidad.getId(),</b>
+<b class="nc">&nbsp;                entidad.getNombreCategoria(),</b>
+<b class="nc">&nbsp;                entidad.getPrecioInscripcion(),</b>
+&nbsp;                equipos,
+&nbsp;                new RestriccionesRequestDTO(
+<b class="nc">&nbsp;                        entidad.getRestricciones().getEdadMinima(),</b>
+<b class="nc">&nbsp;                        entidad.getRestricciones().getEdadMaxima(),</b>
+<b class="nc">&nbsp;                        entidad.getRestricciones().getGeneroNacimiento(),</b>
+<b class="nc">&nbsp;                        entidad.getRestricciones().getNumeroEquipo(),</b>
+<b class="nc">&nbsp;                        entidad.getRestricciones().getNumeroIntegrantesPorEquipo()</b>
+&nbsp;                )
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    protected static EquipoRequestDTO aEquipoRequest(EquipoEntidad entidad){
+<b class="nc">&nbsp;        List&lt;DeportistaRequestDTO&gt; deportistas = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for(DeportistaEntidad deportista: entidad.getDeportistas()){</b>
+<b class="nc">&nbsp;            deportistas.add(aDeportistaRequest(deportista));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new EquipoRequestDTO(</b>
+<b class="nc">&nbsp;                entidad.getNombreEquipo(),</b>
+&nbsp;                deportistas
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    private static DeportistaRequestDTO aDeportistaRequest(DeportistaEntidad deportista){
+<b class="nc">&nbsp;        return new DeportistaRequestDTO(</b>
+<b class="nc">&nbsp;                deportista.getNombre(),</b>
+<b class="nc">&nbsp;                Long.parseLong(deportista.getIdentificacion()),</b>
+<b class="nc">&nbsp;                deportista.getGeneroNacimiento(),</b>
+<b class="nc">&nbsp;                deportista.getFechaNacimiento()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

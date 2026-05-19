@@ -44,18 +44,13 @@ public class TokenService {
             throw new RuntimeException("El token es nulo");
         }
 
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(apiSecret);
-            DecodedJWT verifier = JWT.require(algorithm)
-                    .withIssuer("ignite_api")
-                    .build()
-                    .verify(token); // Si el token fue alterado, esto explota y va al catch
 
-            return verifier.getSubject(); // Retorna el correo del usuario
-
-        } catch (JWTVerificationException exception) {
-            return null; // Si es inválido o expiró, devolvemos null y le negamos la entrada
-        }
+        Algorithm algorithm = Algorithm.HMAC256(apiSecret);
+        return JWT.require(algorithm)
+                .withIssuer("ignite_api")
+                .build()
+                .verify(token) // Si es inválido, lanzará JWTVerificationException automáticamente
+                .getSubject(); // Retorna el correo del usuario
     }
 
     // 3. REGLA DE NEGOCIO: Los tokens duran 1 horas

@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SolicitudController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun.presentacion.controladores</a>
+</div>
+
+<h1>Coverage Summary for Class: SolicitudController (org.bormun.presentacion.controladores)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SolicitudController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun.presentacion.controladores;
+&nbsp;
+&nbsp;import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import org.bormun.presentacion.dto.request.ProcesarSolicitudDTO;
+&nbsp;import org.bormun.presentacion.dto.request.SolicitudRequestDTO;
+&nbsp;import org.bormun.aplicacion.usecase.ProcesarSolicitud;
+&nbsp;import org.bormun.aplicacion.usecase.EnviarSolicitud;
+&nbsp;import org.bormun.infraestructura.entidades.UsuarioEntidad;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.annotation.AuthenticationPrincipal;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api&quot;)
+&nbsp;public class SolicitudController {
+&nbsp;
+&nbsp;    private final EnviarSolicitud enviarSolicitudUseCase;
+&nbsp;    private final ProcesarSolicitud procesarSolicitudUseCase;
+&nbsp;
+<b class="nc">&nbsp;    public SolicitudController(EnviarSolicitud enviarSolicitudUseCase, ProcesarSolicitud procesarSolicitudUseCase) {</b>
+<b class="nc">&nbsp;        this.enviarSolicitudUseCase = enviarSolicitudUseCase;</b>
+<b class="nc">&nbsp;        this.procesarSolicitudUseCase = procesarSolicitudUseCase;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // El POST es a nivel de evento, la categoría va por dentro del JSON
+&nbsp;    @PostMapping(&quot;/eventos/{eventoId}/solicitudes&quot;)
+&nbsp;    @RateLimiter(name = &quot;envioSolicitudes&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; enviar(
+&nbsp;            @PathVariable Long eventoId,
+&nbsp;            @Valid @RequestBody SolicitudRequestDTO dto) {
+&nbsp;
+<b class="nc">&nbsp;        enviarSolicitudUseCase.ejecutar(eventoId, dto);</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED)</b>
+<b class="nc">&nbsp;                .body(Map.of(&quot;mensaje&quot;, &quot;Solicitud enviada correctamente y en proceso de revisión.&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/solicitudes/{solicitudId}/procesar&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; procesar(
+&nbsp;            @PathVariable Long solicitudId,
+&nbsp;            @AuthenticationPrincipal UsuarioEntidad usuarioAutenticado,
+&nbsp;            @Valid @RequestBody ProcesarSolicitudDTO dto) {
+&nbsp;
+<b class="nc">&nbsp;        procesarSolicitudUseCase.ejecutar(solicitudId, dto, usuarioAutenticado);</b>
+<b class="nc">&nbsp;        String mensajeRetorno = &quot;&quot;;</b>
+<b class="nc">&nbsp;        if(dto.estado().name().equals(&quot;ACEPTADO&quot;)){</b>
+<b class="nc">&nbsp;            mensajeRetorno = &quot;Solicitud aceptada exitosamente&quot;;</b>
+<b class="nc">&nbsp;        } else if (dto.estado().name().equals(&quot;RECHAZADO&quot;)) {</b>
+<b class="nc">&nbsp;            mensajeRetorno = &quot;Solicitud rechazada exitosamente.&quot;;</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            mensajeRetorno = &quot;No has procesado la solicitud, sigue EN_PROCESO&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(Map.of(&quot;mensaje&quot;, mensajeRetorno));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

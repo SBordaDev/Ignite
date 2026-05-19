@@ -1,0 +1,165 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Evento</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.bormun.dominio.modelos</a>
+</div>
+
+<h1>Coverage Summary for Class: Evento (org.bormun.dominio.modelos)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Evento</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72,7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (12/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.bormun.dominio.modelos;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;//TODO: agregar estados al evento
+&nbsp;public class Evento {
+&nbsp;    private Long id;
+&nbsp;    private String nombre;
+&nbsp;    private List&lt;Categoria&gt; categorias;
+&nbsp;    private List&lt;Solicitud&gt; solicitudes;
+&nbsp;    private boolean inscripcionAbierta;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    public Evento(String nombre){</b>
+<b class="fc">&nbsp;        this.nombre = nombre;</b>
+<b class="fc">&nbsp;        this.categorias = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.solicitudes = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.inscripcionAbierta = true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void agregarCategoria(String nombreCategoria, int precioInscripcion, Restricciones restricciones){
+<b class="fc">&nbsp;        categorias.add(new Categoria(nombreCategoria, precioInscripcion, restricciones));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNombre() {
+<b class="fc">&nbsp;        return nombre;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void agregarSolicitud(Solicitud solicitud){
+<b class="fc">&nbsp;        solicitudes.add(solicitud);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Categoria&gt; getCategorias() {
+<b class="fc">&nbsp;        return categorias;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Solicitud&gt; getSolicitudes() {
+<b class="fc">&nbsp;        return solicitudes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isInscripcionAbierta() {
+<b class="fc">&nbsp;        return inscripcionAbierta;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setInscripcionAbierta(boolean inscripcionAbierta) {
+<b class="nc">&nbsp;        this.inscripcionAbierta = inscripcionAbierta;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCategorias(List&lt;Categoria&gt; categorias) {
+<b class="nc">&nbsp;        this.categorias = categorias;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-29 11:02</div>
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package org.bormun.infraestructura.seguridad;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,28 +28,44 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 1. Obtenemos el token de la cabecera de la petición
         String tokenJWT = recuperarToken(request);
 
         if (tokenJWT != null) {
+
             // 2. Usamos nuestra máquina para validar el token y sacar el correo
-            String emailUsuario = tokenService.getSubject(tokenJWT);
+            try{
+                String emailUsuario = tokenService.getSubject(tokenJWT);
 
-            if (emailUsuario != null) {
-                // 3. Buscamos al usuario en la base de datos
-                UsuarioEntidad usuario = usuarioRepository.findByEmail(emailUsuario).orElseThrow();
+                if (emailUsuario != null) {
+                    // 3. Buscamos al usuario en la base de datos
+                    UsuarioEntidad usuario = usuarioRepository.findByEmail(emailUsuario).orElseThrow();
 
-                // 4. Traducimos nuestro Rol al idioma que Spring Security entiende (Agregando "ROLE_")
-                var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()));
+                    // 4. Traducimos nuestro Rol al idioma que Spring Security entiende (Agregando "ROLE_")
+                    var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()));
 
-                // 5. Creamos el "Pase de Entrada" oficial de Spring
-                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
+                    // 5. Creamos el "Pase de Entrada" oficial de Spring
+                    var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
 
-                // 6. ¡Le decimos al Guardia que lo deje pasar!
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    // 6. ¡Le decimos al Guardia que lo deje pasar!
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (JWTVerificationException e){
+                System.err.println("Intento de acceso rechazado: Token inválido o expirado. Detalles: " + e.getMessage());
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Retorna un código 401
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                String jsonBody = String.format("{\"error\": \"Acceso Denegado\", \"mensaje\": \"%s\"}", e.getMessage());
+                response.getWriter().write(jsonBody);
+
+                //Detenemos la cadena aquí mismo. La petición muere y retorna al cliente.
+                return;
             }
+
         }
 
         // 7. Continúa con el flujo normal de la petición (hacia el siguiente filtro o el controlador)
