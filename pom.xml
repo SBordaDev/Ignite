@@ -22,6 +22,7 @@
     <sonar.coverage.jacoco.xmlReportPaths>
       target/site/jacoco/jacoco.xml
     </sonar.coverage.jacoco.xmlReportPaths>
+    <nvd.key>03cf3662-4127-42e2-b8c6-0068400ae66b</nvd.key>
   </properties>
 
   <dependencies>
@@ -136,10 +137,12 @@
           </properties>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+
       <plugin>
         <groupId>io.qameta.allure</groupId>
         <artifactId>allure-maven</artifactId>
@@ -176,10 +179,34 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
         <version>3.11.0.3922</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>10.0.3</version> <configuration>
+        <nvdApiKey>${nvd.key}</nvdApiKey>
+        <nvdApiDelay>8000</nvdApiDelay>
+        <connectionTimeout>120000</connectionTimeout>
+
+        <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
+        <hostedWebAnalyzerEnabled>false</hostedWebAnalyzerEnabled>
+        <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
+        <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+        <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+      </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
