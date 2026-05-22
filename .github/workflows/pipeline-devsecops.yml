@@ -1,0 +1,46 @@
+name: Ignite DevSecOps Pipeline
+
+# ¿Cuándo se ejecuta? Cada vez que subas código a la rama main
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-analyze:
+    name: Construcción y Análisis SAST
+    runs-on: ubuntu-latest # Una máquina virtual limpia en la nube
+
+    steps:
+      - name: 1. Descargar el código fuente
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necesario para que SonarQube lea el historial completo
+
+      - name: 2. Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven # Acelera las descargas de dependencias
+
+      - name: 3. Compilar y Ejecutar Pruebas Unitarias (JaCoCo & Allure)
+        run: mvn clean test
+
+      - name: 4. Análisis de Vulnerabilidades (OWASP Dependency-Check)
+        # Aquí inyectamos tu llave de la NVD de forma segura
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn dependency-check:check -Dnvd.key=$NVD_API_KEY
+
+      - name: 5. Empaquetar la Aplicación (.jar)
+        run: mvn package -DskipTests
+
+      - name: 6. Guardar Artefactos (El reporte HTML de seguridad y el JAR)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ignite-artefactos
+          path: |
+            target/*.jar
+            target/dependency-check-report.html
