@@ -1,6 +1,7 @@
 package org.bormun.presentacion.controladores;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.bormun.presentacion.dto.request.EventoRequestDTO;
 import org.bormun.presentacion.dto.response.EventoDetallesCreadorDTO;
 import org.bormun.presentacion.dto.response.EventoResumenDTO;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/eventos")
 public class EventoController {
@@ -51,15 +53,18 @@ public class EventoController {
             Map<String, Object> respuesta = new HashMap<>();
             respuesta.put("mensaje", "Evento creado exitosamente");
             respuesta.put("eventoId", eventoCreado.getId());
+            log.info("Evento deportivo creado | IdCreador {} | IdEvento {}", usuarioAutenticado.getId(), eventoCreado.getId());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
 
         } catch (IllegalArgumentException e) {
             // Si alguna validación de negocio de tu Dominio falla, devolvemos 400
+            log.warn("Falla de validación al crear evento por usuario {}: {}", usuarioAutenticado.getId(), e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             // Si falla la base de datos, imprimimos el error y devolvemos 500
-            e.printStackTrace();
+
+            log.error("Ocurrió un error crítico en el servidor al guardar el evento del usuario {}", usuarioAutenticado.getId(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Ocurrió un error en el servidor al guardar el evento"));
         }

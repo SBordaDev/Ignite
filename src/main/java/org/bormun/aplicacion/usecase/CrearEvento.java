@@ -7,7 +7,9 @@ import org.bormun.infraestructura.entidades.UsuarioEntidad;
 import org.bormun.aplicacion.mapper.EventoMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class CrearEvento {
 
@@ -38,6 +40,7 @@ public class CrearEvento {
         }
 
         if(eventoRepository.existsByNombreIgnoreCase(eventoNuevo.getNombre().trim())){
+            log.warn("Se intento crear un evento con un nombre ya existente");
             throw new IllegalArgumentException("El nombre del evento ya existe");
         }
 
