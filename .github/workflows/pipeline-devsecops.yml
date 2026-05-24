@@ -11,6 +11,7 @@ permissions:
   contents: read
   packages: write
   issues: write
+  security-events: write
 
 jobs:
   build-and-analyze:
@@ -39,11 +40,11 @@ jobs:
       - name: 3. Compilar y Ejecutar Pruebas Unitarias (JaCoCo & Allure)
         run: mvn clean test
 
-      #- name: 4. Análisis de Vulnerabilidades (OWASP Dependency-Check)
-        # Aquí inyectamos tu llave de la NVD de forma segura
-      #  env:
-      #    NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-      #  run: mvn dependency-check:check -Dnvd.key=$NVD_API_KEY
+      - name: 4. Análisis de Vulnerabilidades (OWASP Dependency-Check)
+         Aquí inyectamos tu llave de la NVD de forma segura
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn dependency-check:check -Dnvd.key=$NVD_API_KEY
 
       - name: 5. Empaquetar la Aplicación (.jar)
         run: mvn package -DskipTests
@@ -108,6 +109,13 @@ jobs:
       - name: 12. Apagar y destruir el contenedor de prueba
         if: always()
         run: docker rm -f ignite-dast
+
+      - name: 13. Subir Alertas de Seguridad a GitHub (SARIF)
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: results.sarif
+          category: DAST_OWASP_ZAP
 
       - name: 13. Subir la Imagen a GitHub Container Registry
         run: |
