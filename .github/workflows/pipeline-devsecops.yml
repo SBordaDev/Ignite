@@ -98,7 +98,7 @@ jobs:
           fail_action: false
 
       - name: 11. Apagar y destruir el contenedor de prueba
-        run: docker rm -f ignite-dast 
+        run: docker rm -f ignite-dast
 
       - name: 12. Subir la Imagen a GitHub Container Registry
         run: |
