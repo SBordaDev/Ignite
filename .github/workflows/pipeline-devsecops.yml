@@ -93,9 +93,10 @@ jobs:
           sleep 15
 
       - name: 10. Ataque Dinámico DAST (OWASP ZAP)
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-api-scan@v0.8.0
         with:
-          target: 'http://localhost:8080'
+          target: 'http://localhost:8080/v3/api-docs'
+          format: 'openapi'
           fail_action: false
 
       - name: 11. Apagar y destruir el contenedor de prueba
