@@ -1,4 +1,4 @@
-name: Ignite DevSecOps Pipeline
+name: Ignite DevSecOps CI/CD Pipeline
 
 # ¿Cuándo se ejecuta? Cada vez que subas código a la rama main
 on:
@@ -7,10 +7,14 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-and-analyze:
-    name: Construcción y Análisis SAST
-    runs-on: ubuntu-latest # Una máquina virtual limpia en la nube
+    name: DevSecOps Pipeline
+    runs-on: ubuntu-latest
 
     steps:
       - name: 1. Descargar el código fuente
@@ -44,3 +48,20 @@ jobs:
           path: |
             target/*.jar
             target/dependency-check-report.html
+      - name: 7. Login en GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 8. Construir y Subir la Imagen Docker
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="ghcr.io/$REPO_LOWER/ignite-backend:latest"
+          
+          echo "Construyendo imagen: $IMAGE_NAME"
+          docker build -t $IMAGE_NAME .
+          
+          echo "Subiendo imagen al casillero de GitHub..."
+          docker push $IMAGE_NAME
