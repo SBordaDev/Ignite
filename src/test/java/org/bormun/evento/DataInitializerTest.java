@@ -3,12 +3,14 @@ package org.bormun.evento;
 import org.bormun.aplicacion.repositorios.UsuarioRepository;
 import org.bormun.infraestructura.configs.DataInitializer;
 import org.bormun.infraestructura.entidades.UsuarioEntidad;
+import org.junit.jupiter.api.BeforeEach; // NUEVO
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils; // NUEVO
 
 import static org.mockito.Mockito.*;
 
@@ -24,9 +26,14 @@ class DataInitializerTest {
     @InjectMocks
     private DataInitializer dataInitializer;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(dataInitializer, "adminEmail", "admin@gmail.com");
+        ReflectionTestUtils.setField(dataInitializer, "adminPassword", "ClaveSimulada123");
+    }
+
     @Test
     void run_NoDebeCrearAdmin_CuandoYaExiste() throws Exception {
-        // CAMBIO AQUÍ: Usar exactamente el string que usa tu código real
         when(usuarioRepository.existsByEmail("admin@gmail.com")).thenReturn(true);
 
         dataInitializer.run();
@@ -36,9 +43,7 @@ class DataInitializerTest {
 
     @Test
     void run_DebeCrearAdmin_CuandoNoExiste() throws Exception {
-        // CAMBIO AQUÍ: Usar exactamente el string que usa tu código real
         when(usuarioRepository.existsByEmail("admin@gmail.com")).thenReturn(false);
-        // Si tu código NO usa passwordEncoder.encode(), borra la siguiente línea:
         when(passwordEncoder.encode(anyString())).thenReturn("hash_simulado");
 
         dataInitializer.run();

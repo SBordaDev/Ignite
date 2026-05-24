@@ -74,6 +74,15 @@ services:
     networks:
       - ignite-network
 
+  # 7. SonarQube (Calidad de Código)
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: ignite-sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - ignite-network
+
 # Creamos una red privada para que los 3 contenedores se vean entre sí
 networks:
   ignite-network:

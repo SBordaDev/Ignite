@@ -5,12 +5,15 @@ import org.bormun.dominio.excepciones.ErrorDeportista;
 import org.bormun.dominio.excepciones.SolicitudInvalidaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -40,13 +43,6 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    // 3. Atrapa TUS excepciones personalizadas del Dominio
-    @ExceptionHandler({ErrorDeportista.class, SolicitudInvalidaException.class})
-    public ResponseEntity<Map<String, String>> manejarErroresDelDominio(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Violación de reglas del torneo", "detalle", ex.getMessage()));
-    }
-
     // 4. El "Atrapa-Todo" para errores reales del servidor (Bases de datos caídas, NullPointers)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> manejarErroresInesperados(Exception ex) {
@@ -63,5 +59,54 @@ public class GlobalExceptionHandler {
                         "error", "Demasiadas peticiones.",
                         "detalle", "Por favor, espera un minuto antes de enviar una nueva solicitud de inscripción."
                 ));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> manejarErrorDeLecturaJSON(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Formato de datos inválido. Verifique que no esté enviando texto vacío en campos numéricos o listas."));
+    }
+
+    // 1. Atrapa los errores cuando se rechaza una solicitud completa debido a uno o varios deportistas
+    @ExceptionHandler(SolicitudInvalidaException.class)
+    public ResponseEntity<Map<String, Object>> manejarSolicitudInvalida(SolicitudInvalidaException ex) {
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("error", ex.getMessage());
+
+        if (ex.getCulpables() != null && !ex.getCulpables().isEmpty()) {
+            List<Map<String, Object>> listaDetalles = new ArrayList<>();
+
+            for (ErrorDeportista errorDep : ex.getCulpables()) {
+                Map<String, Object> infoCulpable = new HashMap<>();
+                infoCulpable.put("motivoError", errorDep.getMotivoError().name());
+
+                // Rescatamos el objeto de dominio completo para no perder datos
+                if (errorDep.getDeportista() != null) {
+                    infoCulpable.put("deportista", errorDep.getDeportista());
+                }
+                listaDetalles.add(infoCulpable);
+            }
+            respuesta.put("detalles", listaDetalles);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
+    // 2. Atrapa los errores cuando un solo deportista dispara directamente la anomalía
+    @ExceptionHandler(ErrorDeportista.class)
+    public ResponseEntity<Map<String, Object>> manejarErrorDeportista(ErrorDeportista ex) {
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("error", "Regla de negocio deportiva violada");
+
+        Map<String, Object> detalles = new HashMap<>();
+        detalles.put("motivoError", ex.getMotivoError().name());
+
+        // Rescatamos el objeto de dominio completo
+        if (ex.getDeportista() != null) {
+            detalles.put("deportista", ex.getDeportista());
+        }
+        respuesta.put("detalles", detalles);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
 }

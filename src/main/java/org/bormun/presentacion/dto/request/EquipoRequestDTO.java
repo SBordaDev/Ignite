@@ -1,9 +1,17 @@
 package org.bormun.presentacion.dto.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+
 import java.util.List;
 
 public record EquipoRequestDTO(
+        @NotBlank
         String nombreEquipo,
+
+        @NotEmpty
+        @Valid
         List<DeportistaRequestDTO> integrantes
 ) {
 }

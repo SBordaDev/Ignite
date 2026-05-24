@@ -43,3 +43,5 @@ build/
 
 ignitedb.mv.db
 ignitedb.trace.db
+
+/reportesJmeter

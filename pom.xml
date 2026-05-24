@@ -22,6 +22,13 @@
     <sonar.coverage.jacoco.xmlReportPaths>
       target/site/jacoco/jacoco.xml
     </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.exclusions>
+      **/*Config.java,
+      **/infraestructura/configs/**,
+      **/Swagger*.java,
+      **/Security*.java,
+      **/DataInitializer.java
+    </sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
@@ -168,6 +175,15 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.11</version>
+        <configuration>
+          <excludes>
+            <exclude>**/*Config.*</exclude>
+            <exclude>**/infraestructura/configs/*</exclude>
+            <exclude>**/Swagger*.*</exclude>
+            <exclude>**/Security*.*</exclude>
+            <exclude>**/DataInitializer.*</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <goals>

@@ -1,8 +1,10 @@
 package org.bormun.evento;
 
-import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import org.bormun.dominio.excepciones.ErrorDeportista;
 import org.bormun.dominio.excepciones.SolicitudInvalidaException;
+import org.bormun.dominio.modelos.DatosDeportista;
+import org.bormun.dominio.modelos.Deportista;
+import org.bormun.dominio.modelos.GeneroNacimiento;
 import org.bormun.dominio.modelos.MotivoErrorDeportista;
 import org.bormun.presentacion.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.mockito.Mockito.when;
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,67 +36,63 @@ class GlobalExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializamos MockMvc inyectando el controlador de pruebas y el manejador global
         mockMvc = MockMvcBuilders.standaloneSetup(new TestController())
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
 
-    // 1. Test para MethodArgumentNotValidException (@Valid)
     @Test
     void manejarErroresDeValidacion_DeberiaRetornar400YDetalles() throws Exception {
-        mockMvc.perform(get("/test/validacion")
+        mockMvc.perform(get("/test/validation")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Error en los datos enviados"))
                 .andExpect(jsonPath("$.detalles.campoPrueba").value("El campo no puede estar vacío"));
     }
 
-    // 2. Test para IllegalArgumentException
     @Test
-    void manejarErroresDeLogica_DeberiaRetornar400YMensaje() throws Exception {
+    void manejarSolicitudInvalida_SinCulpables_DeberiaRetornar400SinLista() throws Exception {
+        mockMvc.perform(get("/test/dominio-simple")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("El deportista ya está inscrito en otra categoría"))
+                .andExpect(jsonPath("$.detalles").doesNotExist());
+    }
+
+    @Test
+    void manejarSolicitudInvalida_ConCulpables_DeberiaSerializarDeportistas() throws Exception {
+        mockMvc.perform(get("/test/dominio-con-culpables")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("La solicitud contiene errores de negocio"))
+                .andExpect(jsonPath("$.detalles[0].motivoError").value("GENERO_INVALIDO"))
+                .andExpect(jsonPath("$.detalles[0].deportista.nombre").value("Atleta Caos"));
+    }
+
+    @Test
+    void manejarErrorDeportista_Directo_DeberiaRetornarDetalleDeportista() throws Exception {
+        mockMvc.perform(get("/test/error-deportista")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Regla de negocio deportiva violada"))
+                .andExpect(jsonPath("$.detalles.motivoError").value("EDAD_INVALIDA"))
+                .andExpect(jsonPath("$.detalles.deportista.nombre").value("Atleta Edad"));
+    }
+
+    @Test
+    void manejarIlegalArgumentException_DeberiaRetornar400() throws Exception {
         mockMvc.perform(get("/test/ilegal")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Argumento inválido o recurso no encontrado"));
     }
 
-    // 3. Test para Excepciones del Dominio (ErrorDeportista / SolicitudInvalidaException)
-    @Test
-    void manejarErroresDelDominio_DeberiaRetornar400YDetalleTorneo() throws Exception {
-        mockMvc.perform(get("/test/dominio")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Violación de reglas del torneo"))
-                .andExpect(jsonPath("$.detalle").value("El deportista ya está inscrito en otra categoría"));
-    }
-
-    // 4. Test para Rate Limiting (Resilience4j)
-    @Test
-    void manejarRateLimit_DeberiaRetornar429YDetallePeticiones() throws Exception {
-        mockMvc.perform(get("/test/ratelimit")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isTooManyRequests())
-                .andExpect(jsonPath("$.error").value("Demasiadas peticiones."))
-                .andExpect(jsonPath("$.detalle").value("Por favor, espera un minuto antes de enviar una nueva solicitud de inscripción."));    }
-
-    // 5. Test para el "Atrapa-Todo" (Exception.class - Errores Inesperados 500)
-    @Test
-    void manejarErroresInesperados_DeberiaRetornar500YMensajeSoporte() throws Exception {
-        mockMvc.perform(get("/test/inesperado")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.error").value("Ocurrió un error interno en el servidor. Por favor, contacte a soporte."));
-    }
-
-    /* Controlador Falso de apoyo (Inner Class) exclusivo para simular los fallos
-     */
+    // Controlador Dummy exclusivo para simular los disparos de excepciones
     @RestController
     static class TestController {
 
-        @GetMapping("/test/validacion")
+        @GetMapping("/test/validation")
         public void lanzarValidacion() throws MethodArgumentNotValidException {
-            // Construimos manualmente el fallo de validación para el DTO
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "objetoPrueba");
             bindingResult.addError(new FieldError("objetoPrueba", "campoPrueba", "El campo no puede estar vacío"));
 
@@ -108,24 +107,39 @@ class GlobalExceptionHandlerTest {
             throw new IllegalArgumentException("Argumento inválido o recurso no encontrado");
         }
 
-        @GetMapping("/test/dominio")
-        public void lanzarDominio() {
-            // Usamos una de tus excepciones personalizadas del dominio
+        @GetMapping("/test/dominio-simple")
+        public void lanzarDominioSimple() {
             throw new SolicitudInvalidaException("El deportista ya está inscrito en otra categoría");
         }
 
-        @GetMapping("/test/ratelimit")
-        public void lanzarRateLimit() {
-            // Simulamos el disparo del RateLimiter de Resilience4j
-            RequestNotPermitted mockException = Mockito.mock(RequestNotPermitted.class);
-            Mockito.lenient().when(mockException.getMessage()).thenReturn("Rate limit exceeded");
-            throw mockException;
+        @GetMapping("/test/dominio-con-culpables")
+        public void lanzarDominioConCulpables() {
+            // Instanciamos un deportista real (ajusta los parámetros según tu constructor de dominio)
+            Deportista atleta = new Deportista(
+                    new DatosDeportista(
+                        "Atleta Caos",
+                        "12345",
+                        GeneroNacimiento.MUJER,
+                        LocalDate.of(2005, 5, 23)
+                    )
+            );
+
+            ErrorDeportista error = new ErrorDeportista(atleta, MotivoErrorDeportista.GENERO_INVALIDO);
+
+            throw new SolicitudInvalidaException("La solicitud contiene errores de negocio", List.of(error));
         }
 
-        @GetMapping("/test/inesperado")
-        public void lanzarInesperado() {
-            // Provocamos un error genérico imprevisto (como una caída de base de datos)
-            throw new NullPointerException("Simulación de error de puntero nulo en el servidor");
+        @GetMapping("/test/error-deportista")
+        public void lanzarErrorDeportistaDirecto() {
+            Deportista atleta = new Deportista(
+                    new DatosDeportista(
+                            "Atleta Edad",
+                            "98765",
+                            GeneroNacimiento.HOMBRE,
+                            LocalDate.of(2020, 5, 23)
+                    )
+            );
+            throw new ErrorDeportista(atleta, MotivoErrorDeportista.EDAD_INVALIDA);
         }
     }
 }

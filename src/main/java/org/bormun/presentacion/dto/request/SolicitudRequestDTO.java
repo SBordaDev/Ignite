@@ -1,8 +1,18 @@
 package org.bormun.presentacion.dto.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public record SolicitudRequestDTO(
-    String nombreOrganizacion,
+    @NotBlank
+        String nombreOrganizacion,
+
+    @NotNull
+    @Valid
     EquipoRequestDTO equipo,
+
+    @NotNull
     int idCategoria
 ) {
 }

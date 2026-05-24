@@ -6,6 +6,7 @@ import org.bormun.aplicacion.repositorios.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,12 @@ public class DataInitializer implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${app.admin.email}")
+    private String adminEmail;
+
+    @Value("${app.admin.password}")
+    private String adminPassword;
+
     public DataInitializer(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
@@ -22,16 +29,14 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String correoAdmin = "admin@gmail.com";
-
-        if (!usuarioRepository.existsByEmail(correoAdmin)) {
+        if (!usuarioRepository.existsByEmail(adminEmail)) {
             UsuarioEntidad superAdmin = new UsuarioEntidad(
-                    correoAdmin,
-                    passwordEncoder.encode("@Ignite°10"),
+                    adminEmail,
+                    passwordEncoder.encode(adminPassword),
                     Roles.ADMIN
             );
             usuarioRepository.save(superAdmin);
-            System.out.println(LocalDateTime.now()+" 🛡️ Super Admin creado automáticamente: " + correoAdmin);
+            System.out.println(LocalDateTime.now()+"Super Admin creado automáticamente: " + adminEmail);
         }
     }
 }
