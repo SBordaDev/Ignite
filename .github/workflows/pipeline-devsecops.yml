@@ -93,7 +93,7 @@ jobs:
           sleep 15
 
       - name: 10. Ataque Dinámico DAST (OWASP ZAP - API Scan)
-        uses: zaproxy/action-api-scan@v0.14.0 # <-- Versión actualizada
+        uses: zaproxy/action-api-scan@v0.10.0 # <-- Versión máxima real y corregida
         with:
           target: 'http://localhost:8080/v3/api-docs'
           format: 'openapi'
