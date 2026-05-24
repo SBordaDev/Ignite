@@ -92,12 +92,16 @@ class GlobalExceptionHandlerTest {
     static class TestController {
 
         @GetMapping("/test/validation")
-        public void lanzarValidacion() throws MethodArgumentNotValidException {
+        public void lanzarValidacion() throws MethodArgumentNotValidException, NoSuchMethodException {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "objetoPrueba");
             bindingResult.addError(new FieldError("objetoPrueba", "campoPrueba", "El campo no puede estar vacío"));
 
+            // Obtenemos una referencia real a este mismo método usando Reflexión
+            java.lang.reflect.Method method = this.getClass().getMethod("lanzarValidacion");
+            MethodParameter parametroReal = new MethodParameter(method, -1);
+
             throw new MethodArgumentNotValidException(
-                    Mockito.mock(MethodParameter.class),
+                    parametroReal,
                     bindingResult
             );
         }
