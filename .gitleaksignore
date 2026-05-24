@@ -1,0 +1,5 @@
+# Ignorar secretos de prueba en la carpeta de tests
+[allowlist]
+paths = [
+    '''src/test/.*'''
+]

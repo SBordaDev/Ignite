@@ -22,6 +22,12 @@ jobs:
         with:
           fetch-depth: 0  # Necesario para que SonarQube lea el historial completo
 
+      - name: 1.5. Escaneo de Secretos (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_SUMMARY: true
+
       - name: 2. Configurar Java 21
         uses: actions/setup-java@v4
         with:
