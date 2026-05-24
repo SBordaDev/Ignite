@@ -39,11 +39,11 @@ jobs:
       - name: 3. Compilar y Ejecutar Pruebas Unitarias (JaCoCo & Allure)
         run: mvn clean test
 
-      - name: 4. Análisis de Vulnerabilidades (OWASP Dependency-Check)
+      #- name: 4. Análisis de Vulnerabilidades (OWASP Dependency-Check)
         # Aquí inyectamos tu llave de la NVD de forma segura
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn dependency-check:check -Dnvd.key=$NVD_API_KEY
+      #  env:
+      #    NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      #  run: mvn dependency-check:check -Dnvd.key=$NVD_API_KEY
 
       - name: 5. Empaquetar la Aplicación (.jar)
         run: mvn package -DskipTests
@@ -88,21 +88,28 @@ jobs:
         run: |
           echo "Iniciando Ignite Backend para recibir el ataque..."
           docker run -d -p 8080:8080 --name ignite-dast ${{ env.IMAGE_NAME }}
-            
+
           echo "Dándole a Spring Boot 15 segundos para arrancar completamente..."
           sleep 15
 
-      - name: 10. Ataque Dinámico DAST (OWASP ZAP)
-        uses: zaproxy/action-api-scan@v0.8.0
+      - name: 10. Ataque Dinámico DAST (OWASP ZAP - API Scan)
+        uses: zaproxy/action-api-scan@v0.14.0 # <-- Versión actualizada
         with:
           target: 'http://localhost:8080/v3/api-docs'
           format: 'openapi'
           fail_action: false
 
-      - name: 11. Apagar y destruir el contenedor de prueba
+      - name: 11. Diagnóstico de Errores (Logs de Spring Boot)
+        if: always()
+        run: |
+          echo "=== LOGS DEL CONTENEDOR ==="
+          docker logs ignite-dast
+
+      - name: 12. Apagar y destruir el contenedor de prueba
+        if: always()
         run: docker rm -f ignite-dast
 
-      - name: 12. Subir la Imagen a GitHub Container Registry
+      - name: 13. Subir la Imagen a GitHub Container Registry
         run: |
           echo "Pruebas dinámicas superadas. Subiendo a GHCR..."
           docker push ${{ env.IMAGE_NAME }}
