@@ -1,5 +1,7 @@
 package org.bormun.evento;
 
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import org.bormun.aplicacion.usecase.EnviarSolicitud;
 import org.bormun.aplicacion.usecase.ProcesarSolicitud;
 import org.bormun.infraestructura.entidades.UsuarioEntidad;
@@ -18,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,6 +40,9 @@ class SolicitudControllerTest {
     @Mock
     private ProcesarSolicitud procesarSolicitudUseCase;
 
+    @Mock
+    private RateLimiterRegistry rateLimiterRegistry;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders
@@ -47,6 +52,9 @@ class SolicitudControllerTest {
 
     @Test
     void enviar_DeberiaRetornar201_CuandoSolicitudEsValida() throws Exception {
+        RateLimiter mockRateLimiter = mock(RateLimiter.class);
+        when(mockRateLimiter.acquirePermission()).thenReturn(true);
+        when(rateLimiterRegistry.rateLimiter(anyString(), anyString())).thenReturn(mockRateLimiter);
 
         String jsonRequest = """
                 {

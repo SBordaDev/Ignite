@@ -1,6 +1,5 @@
 package org.bormun.presentacion.controladores;
 
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import org.bormun.presentacion.dto.request.ProcesarSolicitudDTO;
 import org.bormun.presentacion.dto.request.SolicitudRequestDTO;
@@ -10,7 +9,11 @@ import org.bormun.infraestructura.entidades.UsuarioEntidad;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import io.github.resilience4j.ratelimiter.RateLimiter; // ¡Esta es la correcta!
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
 import java.util.Map;
 
@@ -20,18 +23,31 @@ public class SolicitudController {
 
     private final EnviarSolicitud enviarSolicitudUseCase;
     private final ProcesarSolicitud procesarSolicitudUseCase;
+    private final RateLimiterRegistry rateLimiterRegistry;
 
-    public SolicitudController(EnviarSolicitud enviarSolicitudUseCase, ProcesarSolicitud procesarSolicitudUseCase) {
+    public SolicitudController(EnviarSolicitud enviarSolicitudUseCase, ProcesarSolicitud procesarSolicitudUseCase, RateLimiterRegistry rateLimiterRegistry) {
         this.enviarSolicitudUseCase = enviarSolicitudUseCase;
         this.procesarSolicitudUseCase = procesarSolicitudUseCase;
+        this.rateLimiterRegistry = rateLimiterRegistry;
     }
 
     // El POST es a nivel de evento, la categoría va por dentro del JSON
     @PostMapping("/eventos/{eventoId}/solicitudes")
-    @RateLimiter(name = "envioSolicitudes")
     public ResponseEntity<?> enviar(
             @PathVariable Long eventoId,
             @Valid @RequestBody SolicitudRequestDTO dto) {
+
+        String usuarioActual = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 2. Creamos o recuperamos un limitador EXCLUSIVO para este usuario usando la plantilla
+        String nombreLimitador = "solicitudes_" + usuarioActual;
+        RateLimiter rateLimiter = rateLimiterRegistry.rateLimiter(nombreLimitador, "plantillaSolicitudes");
+
+        // 3. Solicitamos permiso a la cubeta de este usuario específico
+        if (!rateLimiter.acquirePermission()) {
+            // Si ya gastó sus 5 peticiones, disparamos la excepción manualmente
+            throw RequestNotPermitted.createRequestNotPermitted(rateLimiter);
+        }
 
         enviarSolicitudUseCase.ejecutar(eventoId, dto);
 
